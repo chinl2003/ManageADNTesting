@@ -16,8 +16,8 @@
 <style scoped>
 header {
   display: flex;
-  justify-content: space-between; 
-  align-items: center;           
+  justify-content: space-between;
+  align-items: center;
   padding: 1rem 1.5rem;
   width: 100%;
   box-sizing: border-box;
@@ -26,26 +26,26 @@ header {
 }
 
 header img {
-  height: 25px; 
+  height: 25px;
   object-fit: contain;
 }
 
 nav {
   display: flex;
   align-items: center;
-  gap: 1.5rem; 
+  gap: 1.5rem;
   font-weight: 500;
   font-size: 1rem;
 }
 
-nav > * {
+nav>* {
   cursor: pointer;
   color: #4a5568;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-nav > *:hover {
+nav>*:hover {
   color: #2b6cb0;
 }
 </style>

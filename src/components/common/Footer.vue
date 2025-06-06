@@ -25,38 +25,37 @@
 </template>
 <style scoped>
 footer {
-  background-color: #f7fafc; 
-  color: #4a5568; 
-  font-size: 0.875rem; 
-  padding: 1.5rem 1.5rem; 
-  margin-top: auto; 
+  background-color: #f7fafc;
+  color: #4a5568;
+  font-size: 0.875rem;
+  padding: 1.5rem 1.5rem;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   box-sizing: border-box;
-  min-height: 150px; 
+  min-height: 150px;
 }
 
-footer > div:first-child {
+footer>div:first-child {
   text-align: center;
   margin-bottom: 1.5rem;
   line-height: 1.5;
 }
 
-footer > div:last-child {
+footer>div:last-child {
   display: flex;
   justify-content: center;
   gap: 4rem;
-  max-width: 640px; 
+  max-width: 640px;
   width: 100%;
-  color: #718096; 
+  color: #718096;
 }
 
-footer > div:last-child > div {
+footer>div:last-child>div {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 </style>
-

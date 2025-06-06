@@ -1,17 +1,25 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '@/pages/customer/HomePage.vue'
-// import Services from '@/pages/customer/'
-// import Blogs from '@/pages/Blogs.vue'
-// import Booking from '@/pages/Booking.vue'
-// import Login from '@/pages/Login.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import MainLayout from "@/layouts/main-layout.vue";
+import AdminLayout from "@/layouts/admin-layout.vue";
+import Home from "@/pages/customer/home-page.vue";
+import AdminPage from "@/pages/admin/admin-page.vue";
 
 export default createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: Home },
-    // { path: '/services', component: Services },
-    // { path: '/blogs', component: Blogs },
-    // { path: '/booking', component: Booking },
-    // { path: '/login', component: Login },
-  ]
-})
+    {
+      path: "/",
+      component: MainLayout,
+      children: [
+        { path: "", component: Home },
+      ],
+    },
+    {
+      path: "/admin",
+      component: AdminLayout,
+      children: [
+        { path: "", component: AdminPage },
+      ],
+    },
+  ],
+});

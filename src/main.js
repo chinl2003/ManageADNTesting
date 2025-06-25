@@ -10,8 +10,12 @@ import {
   faPhoneAlt,
   faMapMarkerAlt,
   faEnvelope,
+  faLock,
+  faSignOutAlt 
 } from "@fortawesome/free-solid-svg-icons";
 import router from "./router";
+import Toast, { POSITION } from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
 
 library.add(
   faGlobe,
@@ -20,10 +24,25 @@ library.add(
   faUser,
   faPhoneAlt,
   faMapMarkerAlt,
-  faEnvelope
+  faEnvelope,
+  faLock,
+  faSignOutAlt
 );
 
 const app = createApp(App);
 app.use(router);
+app.use(Toast, {
+  position: POSITION.TOP_RIGHT,
+  timeout: 3000,
+  closeOnClick: true,
+  pauseOnFocusLoss: true,
+  pauseOnHover: true,
+  draggable: true,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: false,
+  hideProgressBar: false,
+  closeButton: 'button',
+  icon: true,
+});
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.mount("#app");

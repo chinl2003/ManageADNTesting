@@ -1,13 +1,12 @@
 <template>
   <header class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-    <img src="@/assets/logo.png" alt="Logo" class="h-10">
-    <nav class="space-x-4">
+    <nav class="nav-menu w-full">
       <div>Trang chủ</div>
       <div>Dịch vụ</div>
       <div>Blog</div>
       <div>Đặt hẹn</div>
-      <div class="flex items-center space-x-1">
-        <font-awesome-icon :icon="['fas', 'user']" />
+      <div class="flex items-center justify-center">
+        <font-awesome-icon :icon="['fas', 'user']" class="mr-1" />
         <span>Tài khoản</span>
       </div>
     </nav>
@@ -15,37 +14,31 @@
 </template>
 <style scoped>
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
   width: 100%;
   box-sizing: border-box;
   background-color: white;
   border-bottom: 1px solid #e7dede;
 }
 
-header img {
-  height: 25px;
-  object-fit: contain;
-}
-
-nav {
+.nav-menu {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1.5rem;
+  width: 100%;
   font-weight: 500;
   font-size: 1rem;
 }
 
-nav>* {
+.nav-menu > div {
+  flex: 1; 
+  text-align: center;
   cursor: pointer;
   color: #4a5568;
-  text-decoration: none;
   transition: color 0.2s ease;
+  padding: 1rem 0; 
 }
 
-nav>*:hover {
+.nav-menu > div:hover {
   color: #2b6cb0;
 }
 </style>

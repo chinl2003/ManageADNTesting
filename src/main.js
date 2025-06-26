@@ -11,11 +11,20 @@ import {
   faMapMarkerAlt,
   faEnvelope,
   faLock,
-  faSignOutAlt 
+  faSignOutAlt,
+  faShoppingCart,
+  faFileInvoice,
+  faFileSignature,
+  faChartBar,
+  faStar,
+  faFlask,
+  faUsers,
+  faBlog,
+  faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import router from "./router";
-import Toast, { POSITION } from 'vue-toastification';
-import 'vue-toastification/dist/index.css';
+import Toast, { POSITION } from "vue-toastification";
+import "vue-toastification/dist/index.css";
 
 library.add(
   faGlobe,
@@ -26,7 +35,16 @@ library.add(
   faMapMarkerAlt,
   faEnvelope,
   faLock,
-  faSignOutAlt
+  faSignOutAlt,
+  faShoppingCart,
+  faFileInvoice,
+  faFileSignature,
+  faChartBar,
+  faStar,
+  faFlask,
+  faUsers,
+  faBlog,
+  faBars
 );
 
 const app = createApp(App);
@@ -41,7 +59,7 @@ app.use(Toast, {
   draggablePercent: 0.6,
   showCloseButtonOnHover: false,
   hideProgressBar: false,
-  closeButton: 'button',
+  closeButton: "button",
   icon: true,
 });
 app.component("font-awesome-icon", FontAwesomeIcon);

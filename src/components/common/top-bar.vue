@@ -6,10 +6,10 @@
       </div>
 
       <div class="auth-actions flex items-center space-x-8 pr-4">
-        <template v-if="fullName">
+        <template v-if="authState.fullName">
           <div class="flex items-center space-x-2 text-gray-700 font-medium user-info">
             <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="text-base" @click="handleLogout" />
-            <span>Xin chào, {{ fullName ?? '' }}</span>
+            <span>Xin chào, {{ authState.fullName }}</span>
           </div>
         </template>
 
@@ -29,19 +29,20 @@
   </div>
 </template>
 <script>
+import { authState } from '@/store/auth';
+
 export default {
-  data() {
+  setup() {
     return {
-      fullName: ''
+      authState
     };
-  },
-  mounted() {
-    this.fullName = localStorage.getItem('userFullName') || '';
   },
   methods: {
     handleLogout() {
       localStorage.clear();
-      this.$router.push('/login');
+      authState.fullName = '';
+      authState.role = '';
+      this.$router.push('/');
     }
   }
 };

@@ -41,6 +41,7 @@
 <script>
 import axios from '@/utils/axios';
 import { useToast } from 'vue-toastification';
+import { authState } from '@/store/auth';
 
 export default {
   name: 'LoginPage',
@@ -74,13 +75,13 @@ export default {
 
         if (response.data.success) {
           const token = response.data.data;
-          // const payload = JSON.parse(atob(token.split('.')[1]));
           const payload = this.parseJwt(token);
 
           const expiresAt = payload.exp * 1000;
           const now = Date.now();
 
-          const fullName = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || '';
+          const fullNameEncoded = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || '';
+          const fullName = decodeURIComponent(fullNameEncoded);
           const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || '';
 
           localStorage.setItem('token', token);
@@ -88,6 +89,8 @@ export default {
           localStorage.setItem('userRole', role);
           localStorage.setItem('loginTime', Date.now().toString());
           localStorage.setItem('expiresAt', expiresAt);
+          authState.fullName = fullName;
+          authState.role = role;
           setTimeout(() => {
             this.logout();
           }, expiresAt - now);

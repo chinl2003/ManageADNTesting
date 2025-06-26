@@ -21,10 +21,14 @@ import {
   faUsers,
   faBlog,
   faBars,
+  faPlus,
+  faTrash,
+  faEdit 
 } from "@fortawesome/free-solid-svg-icons";
 import router from "./router";
 import Toast, { POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 library.add(
   faGlobe,
@@ -44,7 +48,10 @@ library.add(
   faFlask,
   faUsers,
   faBlog,
-  faBars
+  faBars,
+  faPlus,
+  faTrash,
+  faEdit 
 );
 
 const app = createApp(App);

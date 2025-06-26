@@ -6,6 +6,7 @@ import AdminPage from "@/pages/admin/admin-page.vue";
 import LoginView from "@/pages/customer/login.vue";
 import RegisterView from "@/pages/customer/register.vue";
 import { toastError } from "@/utils/toast"; 
+import AccountManagement from "@/pages/admin/account/account-management.vue";
 
 const routes = [
   {
@@ -29,7 +30,12 @@ const routes = [
     path: "/admin",
     component: AdminLayout,
     children: [
-      { path: "", component: AdminPage }
+      { path: "", component: AdminPage },
+      {
+        path: "account-management",
+        name: "AccountManagement",
+        component: AccountManagement
+      }
     ],
     meta: {
       requiresAuth: true,

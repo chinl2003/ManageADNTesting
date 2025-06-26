@@ -12,9 +12,11 @@
 
 <script>
 import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { useRouter } from 'vue-router'
 
 export default {
     setup() {
+        const router = useRouter();
         const isExpanded = ref(false);
         const activeIndex = ref(-1);
         const clickedIndex = ref(-1);
@@ -29,7 +31,7 @@ export default {
             { name: 'Thống kê', icon: ['fas', 'chart-bar'] },
             { name: 'Quản lí đánh giá dịch vụ', icon: ['fas', 'star'] },
             { name: 'Quản lí dịch vụ', icon: ['fas', 'flask'] },
-            { name: 'Quản lí tài khoản', icon: ['fas', 'users'] },
+            { name: 'Quản lí tài khoản', icon: ['fas', 'users'], route: '/admin/account-management' },
             { name: 'Quản lí nội dung blogs', icon: ['fas', 'blog'] }
         ];
 
@@ -45,6 +47,10 @@ export default {
             isExpanded.value = false;
             activeIndex.value = -1;
             sidebarExpanded.value = false;
+            const item = menuItems[clickedIndex.value];
+            if (item?.route) {
+                router.push(item.route);
+            }
         };
 
         const handleClickOutside = (e) => {

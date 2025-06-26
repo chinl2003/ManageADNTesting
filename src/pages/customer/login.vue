@@ -40,15 +40,11 @@
 
 <script>
 import axios from '@/utils/axios';
-import { useToast } from 'vue-toastification';
 import { authState } from '@/store/auth';
+import { toastSuccess, toastError, toastWarning } from '@/utils/toast';
 
 export default {
   name: 'LoginPage',
-  setup() {
-    const toast = useToast();
-    return { toast };
-  },
   data() {
     return {
       form: {
@@ -61,7 +57,7 @@ export default {
   methods: {
     async handleLogin() {
       if (!this.form.email || !this.form.password) {
-        this.toast.error('Vui lòng nhập đầy đủ email và mật khẩu');
+        toastError('Vui lòng nhập đầy đủ email và mật khẩu');
         return;
       }
 
@@ -91,25 +87,25 @@ export default {
           localStorage.setItem('expiresAt', expiresAt);
           authState.fullName = fullName;
           authState.role = role;
+
           setTimeout(() => {
             this.logout();
           }, expiresAt - now);
 
-          this.toast.success('Đăng nhập thành công!');
-          this.$router.push('/');
+          toastSuccess('Đăng nhập thành công!');
+          this.$router.push(role === 'Customer' ? '/' : '/admin');
         } else {
-          this.toast.error(response.data.message || 'Đăng nhập thất bại!');
+          toastError(response.data.message || 'Đăng nhập thất bại!');
         }
       } catch (err) {
-        const msg = err.response?.data?.message || 'Đã xảy ra lỗi khi đăng nhập.';
-        this.toast.error(msg);
+        toastError(err.response?.data?.message || 'Đã xảy ra lỗi khi đăng nhập.');
       } finally {
         this.loading = false;
       }
     },
     logout() {
       localStorage.clear();
-      this.toast.info('Phiên đăng nhập đã hết hạn');
+      toastWarning('Phiên đăng nhập đã hết hạn');
       this.$router.push('/login');
     },
     parseJwt(token) {
@@ -188,7 +184,6 @@ export default {
   margin-left: 2px;
 }
 
-/* Input group */
 .input-group {
   position: relative;
   margin-top: 0.5rem;
@@ -216,7 +211,6 @@ export default {
   pointer-events: none;
 }
 
-/* Forgot password */
 .options {
   display: flex;
   justify-content: flex-end;
@@ -234,7 +228,6 @@ export default {
   color: #2b6cb0;
 }
 
-/* Submit button */
 .btn {
   width: 100%;
   background-color: #4257b2;
@@ -252,7 +245,6 @@ export default {
   background-color: #2b3f91;
 }
 
-/* Signup text */
 .signup-text {
   font-size: 0.875rem;
   text-align: center;

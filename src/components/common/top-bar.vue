@@ -8,7 +8,7 @@
       <div class="auth-actions flex items-center space-x-8 pr-4">
         <template v-if="authState.fullName">
           <div class="flex items-center space-x-2 text-gray-700 font-medium user-info">
-            <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="text-base" @click="handleLogout" />
+            <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="text-base cursor-pointer" @click="handleLogout" />
             <span>Xin chào, {{ authState.fullName }}</span>
           </div>
         </template>
@@ -28,8 +28,10 @@
     </div>
   </div>
 </template>
+
 <script>
 import { authState } from '@/store/auth';
+import { toastSuccess, toastError } from '@/utils/toast';
 
 export default {
   setup() {
@@ -39,14 +41,20 @@ export default {
   },
   methods: {
     handleLogout() {
-      localStorage.clear();
-      authState.fullName = '';
-      authState.role = '';
-      this.$router.push('/');
+      try {
+        localStorage.clear();
+        authState.fullName = '';
+        authState.role = '';
+        toastSuccess('Đăng xuất thành công!');
+        this.$router.push('/login');
+      } catch (error) {
+        toastError('Đăng xuất thất bại');
+      }
     }
   }
 };
 </script>
+
 <style scoped>
 .user-info {
   display: flex;

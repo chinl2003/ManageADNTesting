@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+  <header class="bg-white shadow-md px-6 flex justify-between items-center">
     <nav class="nav-menu w-full">
       <div>Trang chủ</div>
       <div>Dịch vụ</div>

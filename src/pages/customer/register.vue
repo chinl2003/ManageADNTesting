@@ -290,7 +290,7 @@ export default {
 .form input[type="password"],
 .form input[type="tel"],
 .form input[type="date"] {
-  width: 94%;
+  width: 100%;
   padding: 0.75rem;
   margin-top: 0.25rem;
   border: 1px solid #ccc;

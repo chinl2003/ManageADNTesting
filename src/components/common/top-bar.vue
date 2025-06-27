@@ -64,7 +64,7 @@ export default {
 .topbar {
   display: flex;
   align-items: center;
-  height: 30px;
+  height: 40px;
   border-bottom: 1px solid #e7dede;
   background-color: white;
   font-size: 0.875rem;

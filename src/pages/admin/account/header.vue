@@ -4,12 +4,12 @@
       <h2 class="text-xl font-bold">Danh sách người dùng</h2>
     </div>
     <div class="col-7 d-flex justify-content-end gap-2">
-      <vue-multiselect
+      <!-- <vue-multiselect
         v-model="selectedStatus"
         :options="statusOptions"
         placeholder="Chọn tình trạng"
         class="w-50"
-      />
+      /> -->
       <button class="btn btn-success text-white" @click="showModal = true">Thêm người dùng</button>
     </div>
 
@@ -18,12 +18,10 @@
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect';
 import CreateUserModal from './create.vue';
 
 export default {
   components: {
-    Multiselect,
     CreateUserModal
   },
   data() {

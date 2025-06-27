@@ -1,5 +1,5 @@
 <template>
-    <div class="modal-overlay" v-if="visible">
+    <div class="modal-overlay">
         <div class="modal">
             <button class="modal-close" @click="$emit('close')">×</button>
             <h2 class="modal-title">Vui lòng xác thực Email</h2>
@@ -25,7 +25,6 @@ import { useToast } from 'vue-toastification';
 export default {
     name: 'RegisterModal',
     props: {
-        visible: Boolean,
         defaultEmail: String
     },
     emits: ['close'],

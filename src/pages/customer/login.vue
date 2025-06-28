@@ -195,6 +195,8 @@ export default {
   border: 1px solid #ccc;
   border-radius: 8px;
   transition: border-color 0.3s;
+  border-top-left-radius: 8px !important;
+  border-bottom-left-radius: 8px !important;
 }
 
 .input-group input:focus {

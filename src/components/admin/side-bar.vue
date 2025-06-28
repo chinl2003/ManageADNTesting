@@ -31,6 +31,7 @@ export default {
             { name: 'Thống kê', icon: ['fas', 'chart-bar'] },
             { name: 'Quản lí đánh giá dịch vụ', icon: ['fas', 'star'] },
             { name: 'Quản lí dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-management' },
+            { name: 'Quản lí giá dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-price-management' },
             { name: 'Quản lí tài khoản', icon: ['fas', 'users'], route: '/admin/account-management' },
             { name: 'Quản lí nội dung blogs', icon: ['fas', 'blog'] }
         ];
@@ -131,5 +132,13 @@ export default {
 
 .sidebar-label:hover {
     opacity: 1;
+}
+:deep(.multiselect__option--highlight) {
+  background-color: #1c2260 !important;
+  color: white !important;
+}
+
+:deep(.multiselect__option span span) {
+  display: none !important;
 }
 </style>

@@ -7,7 +7,7 @@
       <button class="btn btn-success text-white" @click="showModal = true">Thêm dịch vụ</button>
     </div>
 
-    <CreateModal :show="showModal" @close="showModal = false"/>
+    <CreateModal :show="showModal" @close="showModal = false" />
   </div>
 </template>
 
@@ -20,11 +20,9 @@ export default {
   },
   data() {
     return {
-      selectedStatus: null,
-      statusOptions: ['Hoạt động', 'Ngừng hoạt động'],
       showModal: false
     };
-  },
+  }
 };
 </script>
 

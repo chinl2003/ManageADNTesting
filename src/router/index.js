@@ -8,6 +8,7 @@ import RegisterView from "@/pages/customer/register.vue";
 import { toastError } from "@/utils/toast"; 
 import AccountManagement from "@/pages/admin/account/account-management.vue";
 import ServiceManagement from "@/pages/admin/service/service-management.vue";
+import ServicePriceManagement from "@/pages/admin/service-price/service-price-management.vue";
 
 const routes = [
   {
@@ -41,6 +42,11 @@ const routes = [
         path: "service-management",
         name: "ServiceManagement",
         component: ServiceManagement
+      },
+      {
+        path: "service-price-management",
+        name: "ServicePriceManagement",
+        component: ServicePriceManagement
       },
     ],
     meta: {

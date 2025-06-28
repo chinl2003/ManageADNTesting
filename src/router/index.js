@@ -7,6 +7,7 @@ import LoginView from "@/pages/customer/login.vue";
 import RegisterView from "@/pages/customer/register.vue";
 import { toastError } from "@/utils/toast"; 
 import AccountManagement from "@/pages/admin/account/account-management.vue";
+import ServiceManagement from "@/pages/admin/service/service-management.vue";
 
 const routes = [
   {
@@ -35,7 +36,12 @@ const routes = [
         path: "account-management",
         name: "AccountManagement",
         component: AccountManagement
-      }
+      },
+      {
+        path: "service-management",
+        name: "ServiceManagement",
+        component: ServiceManagement
+      },
     ],
     meta: {
       requiresAuth: true,

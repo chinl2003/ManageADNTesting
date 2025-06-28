@@ -30,7 +30,7 @@ export default {
             { name: 'Quản lí yêu cầu thu mẫu', icon: ['fas', 'file-signature'] },
             { name: 'Thống kê', icon: ['fas', 'chart-bar'] },
             { name: 'Quản lí đánh giá dịch vụ', icon: ['fas', 'star'] },
-            { name: 'Quản lí dịch vụ', icon: ['fas', 'flask'] },
+            { name: 'Quản lí dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-management' },
             { name: 'Quản lí tài khoản', icon: ['fas', 'users'], route: '/admin/account-management' },
             { name: 'Quản lí nội dung blogs', icon: ['fas', 'blog'] }
         ];

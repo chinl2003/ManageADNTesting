@@ -2,30 +2,21 @@
   <div class="main-content">
     <div class="row-grid header-row">
       <div class="col-cell">STT</div>
-      <div class="col-cell">Họ và tên</div>
-      <div class="col-cell">Email</div>
-      <div class="col-cell">Số điện thoại</div>
-      <div class="col-cell">Vai trò</div>
-      <div class="col-cell">Ngày sinh</div>
-      <div class="col-cell">Giới tính</div>
-      <div class="col-cell">Chức vụ</div>
+      <div class="col-cell">Tên  dịch vụ</div>
+      <div class="col-cell">Mô tả</div>
+      <div class="col-cell">Trạng thái</div>
+      <div class="col-cell">Ngày tạo</div>
       <div class="col-cell"></div>
     </div>
 
-    <div v-for="(user, index) in paginatedUsers" :key="user.id" class="row-grid data-row">
+    <div v-for="(service, index) in paginate" :key="service.id" class="row-grid data-row">
       <div class="col-cell">{{ index + 1 + (currentPage - 1) * pageSize }}</div>
-      <div class="col-cell">{{ user.fullName }}</div>
-      <div class="col-cell">{{ user.email }}</div>
-      <div class="col-cell">{{ user.phone }}</div>
-      <div class="col-cell">{{ user.role }}</div>
-      <div class="col-cell">{{ user.dob }}</div>
-      <div class="col-cell">{{ user.gender }}</div>
-      <div class="col-cell">{{ user.position }}</div>
+      <div class="col-cell">{{ service.name }}</div>
+      <div class="col-cell">{{ service.description }}</div>
+      <div class="col-cell">{{ service.isActive ? 'Hoạt động' : 'Không hoạt động' }}</div>
+      <div class="col-cell">{{ service.createdAtString }}</div>
       <div class="col-cell action-buttons">
-        <button class="btn-square green" title="Thêm chức vụ">
-          <font-awesome-icon icon="plus" />
-        </button>
-        <button class="btn-square red" title="Xóa tài khoản">
+        <button class="btn-square red" title="Xóa dịch vụ">
           <font-awesome-icon icon="trash" />
         </button>
         <button class="btn-square gray" title="Chỉnh sửa">
@@ -35,7 +26,7 @@
     </div>
 
     <div class="d-flex justify-content-center mt-3">
-      <Paginate :total-items="users.length" :items-per-page="pageSize" v-model:current-page="currentPage" />
+      <Paginate :total-items="services.length" :items-per-page="pageSize" v-model:current-page="currentPage" />
     </div>
   </div>
 </template>
@@ -48,26 +39,26 @@ export default {
     },
     data() {
         return {
-            users: [],
+            services: [],
             currentPage: 1,
             pageSize: 20,
             totalItems: 0
         };
     },
     computed: {
-        paginatedUsers() {
-            return this.users;
+        paginate() {
+            return this.services;
         }
     },
     watch: {
-        currentPage: 'fetchUsers'
+        currentPage: 'fetchServices'
     },
     mounted() {
-        this.fetchUsers();
+        this.fetchServices();
     },
     methods: {
-        fetchUsers() {
-            axios.get('/users', {
+        fetchServices() {
+            axios.get('/services/get-list-services', {
                 params: {
                     page: this.currentPage,
                     pageSize: this.pageSize
@@ -76,17 +67,11 @@ export default {
                 .then(response => {
                     if (response.data.success) {
                         const paged = response.data.data;
-                        this.users = paged.items.map(user => ({
-                            id: user.id,
-                            fullName: user.fullName || '',
-                            email: user.email,
-                            phone: user.phone || '',
-                            role: user.role,
-                            dob: user.dateOfBirth
-                                ? new Date(user.dateOfBirth).toLocaleDateString('vi-VN')
-                                : '',
-                            gender: user.gender || '',
-                            position: user.position || ''
+                        this.services = paged.items.map(service => ({
+                            name: service.name,
+                            description: service.description || '',
+                            isActive: service.isActive,
+                            createdAtString: service.createdAtString || '',
                         }));
                         this.totalItems = paged.totalItems;
                     } else {
@@ -94,7 +79,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.error('Lỗi khi tải danh sách người dùng:', error);
+                    console.error('Lỗi khi tải danh sách dịch vụ:', error);
                 });
         }
     }
@@ -113,15 +98,12 @@ export default {
 .row-grid {
   display: grid;
   grid-template-columns:
-    60px  
-    280px  
-    280px   
-    140px   
-    150px  
-    120px   
-    100px  
-    150px   
-    100px; 
+    60px    
+    400px    
+    400px   
+    200px   
+    200px   
+    100px;  
   align-items: center;
   padding: 8px 12px;
   width: 100%;
@@ -190,6 +172,7 @@ export default {
   background-color: #8d8d8d;
 }
 
+/* Responsive: Thu gọn table */
 @media (max-width: 768px) {
   .row-grid {
     display: block;
@@ -204,7 +187,7 @@ export default {
   }
 
   .header-row {
-    display: none;
+    display: none; 
   }
 
   .data-row {

@@ -12,7 +12,7 @@
 <script>
 import Topbar from '@/components/common/top-bar.vue'
 import Header from '@/components/customer/Header.vue'
-import Footer from '@/components/common/footer.vue'
+import Footer from '@/components/common/Footer.vue'
 export default {
   components: { Topbar, Header, Footer }
 }

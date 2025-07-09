@@ -1,44 +1,161 @@
 <template>
-  <header class="bg-white shadow-md px-6 flex justify-between items-center">
-    <nav class="nav-menu w-full">
-      <div>Trang chủ</div>
-      <div>Dịch vụ</div>
-      <div>Blog</div>
-      <div>Đặt hẹn</div>
-      <div class="flex items-center justify-center">
-        <font-awesome-icon :icon="['fas', 'user']" class="mr-1" />
-        <span>Tài khoản</span>
+  <div class="relative">
+    <header
+      class="bg-white shadow-md px-6 flex justify-between items-center"
+      ref="headerRef"
+    >
+      <nav class="nav-menu w-full">
+        <div>Trang chủ</div>
+        <div>Các loại dịch vụ</div>
+        <div>Hướng dẫn thu mẫu</div>
+        <div>Chia sẻ về ADN</div>
+
+        <div
+          class="relative flex items-center justify-center account-menu"
+          ref="accountRef"
+          @click="toggleDropdown"
+        >
+          <font-awesome-icon :icon="['fas', 'user']" class="mr-1" />
+          <span>Tài khoản của tôi</span>
+        </div>
+      </nav>
+    </header>
+
+    <div
+      v-if="dropdownOpen"
+      class="dropdown-options bg-white shadow-md rounded-md z-50"
+      :style="{ position: 'absolute', top: dropdownTop + 'px', right: 0 }"
+    >
+      <div class="dropdown-item" @click="goToMyOrders">
+        <font-awesome-icon :icon="['fas', 'history']" class="icon" />
+        <span class="label">Đơn hàng của tôi</span>
       </div>
-    </nav>
-  </header>
+      <div class="dropdown-item">
+        <font-awesome-icon :icon="['fas', 'vial']" class="icon" />
+        <span class="label">Kết quả xét nghiệm</span>
+      </div>
+      <div class="dropdown-item">
+        <font-awesome-icon :icon="['fas', 'star']" class="icon" />
+        <span class="label">Đánh giá và phản hồi</span>
+      </div>
+      <div class="dropdown-item">
+        <font-awesome-icon :icon="['fas', 'id-card']" class="icon" />
+        <span class="label">Hồ sơ của tôi</span>
+      </div>
+    </div>
+  </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      dropdownOpen: false,
+      dropdownWidth: 0,
+      dropdownTop: 0,
+      dropdownLeft: 0,
+    }
+  },
+  mounted() {
+    document.addEventListener("click", this.handleClickOutside)
+  },
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleClickOutside)
+  },
+  methods: {
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen
+      this.$nextTick(() => {
+        if (this.$refs.accountRef) {
+          const rect = this.$refs.accountRef.getBoundingClientRect()
+          this.dropdownWidth = rect.width
+          this.dropdownTop = rect.bottom + window.scrollY 
+          this.dropdownLeft = rect.left + window.scrollX
+        }
+      })
+    },
+    handleClickOutside(event) {
+      if (
+        this.dropdownOpen &&
+        !this.$refs.accountRef.contains(event.target)
+      ) {
+        this.dropdownOpen = false
+      }
+    },
+    goToMyOrders() {
+      this.dropdownOpen = false
+      this.$router.push('/my-orders')
+    }
+  }
+}
+</script>
 <style scoped>
 header {
   width: 100%;
   box-sizing: border-box;
   background-color: white;
   border-bottom: 1px solid #e7dede;
+  z-index: 10;
 }
 
 .nav-menu {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
   font-weight: 500;
   font-size: 1rem;
 }
 
 .nav-menu > div {
-  flex: 1; 
+  flex: 1;
   text-align: center;
   cursor: pointer;
   color: #4a5568;
   transition: color 0.2s ease;
-  padding: 1rem 0; 
+  padding: 1rem 0;
+  position: relative;
 }
 
 .nav-menu > div:hover {
   color: #2b6cb0;
+}
+
+.dropdown-options {
+  border: 1px solid #ddd;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.dropdown-item {
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: #718096;
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+}
+
+.dropdown-item .icon {
+  margin-right: 6px;
+  color: #718096;
+  transition: color 0.3s;
+}
+
+.dropdown-item .label {
+  flex: 1;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background-color: #5a67d8;
+  color: #fff;
+}
+
+.dropdown-item:hover .icon {
+  color: #fff;
 }
 </style>

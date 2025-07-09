@@ -24,7 +24,7 @@ import {
   faBars,
   faPlus,
   faTrash,
-  faEdit 
+  faEdit,faHistory, faVial, faIdCard
 } from "@fortawesome/free-solid-svg-icons";
 import router from "./router";
 import Toast, { POSITION } from "vue-toastification";
@@ -52,7 +52,7 @@ library.add(
   faBars,
   faPlus,
   faTrash,
-  faEdit 
+  faEdit, faHistory, faVial, faIdCard
 );
 
 const app = createApp(App);

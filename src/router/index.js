@@ -9,6 +9,7 @@ import { toastError } from "@/utils/toast";
 import AccountManagement from "@/pages/admin/account/account-management.vue";
 import ServiceManagement from "@/pages/admin/service/service-management.vue";
 import ServicePriceManagement from "@/pages/admin/service-price/service-price-management.vue";
+import OrderList from "@/pages/customer/orders/index.vue";
 
 const routes = [
   {
@@ -25,6 +26,11 @@ const routes = [
         path: "register",
         name: "Register",
         component: RegisterView
+      },
+      {
+        path: "my-orders",
+        name: "OrderList",
+        component: OrderList
       }
     ]
   },

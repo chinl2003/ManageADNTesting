@@ -87,6 +87,7 @@ export default {
           localStorage.setItem('expiresAt', expiresAt);
           authState.fullName = fullName;
           authState.role = role;
+          authState.token = token;
 
           setTimeout(() => {
             this.logout();

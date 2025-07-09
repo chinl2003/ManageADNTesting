@@ -34,10 +34,12 @@
           <div class="col">{{ order.bookingDate }}</div>
           <div class="col">{{ getStatusLabel(order.status) }}</div>
           <div class="col text-center">
-            <button class="btn btn-sm btn-outline-primary me-1" title="Chỉnh sửa">
+            <button class="btn btn-sm btn-outline-primary me-1" :disabled="order.status !== 0"
+              :class="{ 'disabled-btn': order.status !== 0 }" title="Chỉnh sửa" @click="openEditModal(order)">
               <i class="bi bi-pencil-square"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger me-1" title="Hủy đơn hàng">
+            <button class="btn btn-sm btn-outline-danger me-1" :disabled="order.status !== 0"
+              :class="{ 'disabled-btn': order.status !== 0 }" title="Hủy đơn hàng">
               <i class="bi bi-x-circle"></i>
             </button>
             <button class="btn btn-sm btn-outline-success" title="Thanh toán">
@@ -57,6 +59,9 @@
     <div class="d-flex justify-content-center mt-3">
       <Paginate :total-items="totalItems" :items-per-page="pageSize" v-model:current-page="currentPage" />
     </div>
+    <Teleport to="body">
+      <BookingModal :show="showEditModal" :edit-data="selectedOrder" @close="onModalClose" @updated="onOrderUpdated" />
+    </Teleport>
   </div>
 </template>
 
@@ -64,6 +69,7 @@
 <script>
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import axios from '@/utils/axios';
+import BookingModal from './create.vue';
 import {
   ResultTimeType,
   SampleMethod,
@@ -76,7 +82,7 @@ export default {
   props: {
     filterStatus: [String, Number],
   },
-  components: { Paginate },
+  components: { Paginate, BookingModal },
   data() {
     return {
       orders: [],
@@ -84,6 +90,8 @@ export default {
       pageSize: 20,
       totalItems: 0,
       isLoading: false,
+      selectedOrder: null,
+      showEditModal: false,
     };
   },
   watch: {
@@ -143,6 +151,17 @@ export default {
     getStatusLabel(value) {
       return getEnumLabel(BookingStatus, value);
     },
+    openEditModal(order) {
+      this.selectedOrder = order;
+      this.showEditModal = true;
+    },
+    onModalClose() {
+      this.showEditModal = false;
+      this.selectedOrder = null;
+    },
+    onOrderUpdated() {
+      this.fetchOrders();
+    }
   },
 };
 </script>
@@ -195,5 +214,9 @@ export default {
   font-style: italic;
   padding: 2rem;
   color: #888;
+}
+.action-btn.disabled-btn {
+  opacity: 0.5;
+  cursor: not-allowed !important;
 }
 </style>

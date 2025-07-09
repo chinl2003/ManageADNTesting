@@ -2,11 +2,11 @@
   <div v-if="show" class="modal-overlay">
     <div class="modal-content">
       <button class="close-btn" @click="$emit('close')">&times;</button>
-      <h4 class="title">Tạo đơn hàng mới</h4>
+      <h4 class="title">{{ editData ? 'Cập nhật đơn hàng' : 'Tạo đơn hàng mới' }}</h4>
 
       <form @submit.prevent="validateForm">
         <div class="form-scroll">
-          <!-- Loại dịch vụ -->
+
           <div class="form-group">
             <label>Loại dịch vụ <span class="required">*</span></label>
             <Multiselect v-model="form.service" :options="services" placeholder="Chọn loại dịch vụ" label="name"
@@ -14,7 +14,6 @@
             <div class="error" v-if="errors.service">Vui lòng chọn loại dịch vụ.</div>
           </div>
 
-          <!-- Loại xét nghiệm -->
           <div class="form-group">
             <label>Loại xét nghiệm <span class="required">*</span></label>
             <Multiselect v-model="form.isCivil" :options="civilOptions" placeholder="Chọn loại xét nghiệm" label="label"
@@ -22,7 +21,6 @@
             <div class="error" v-if="errors.isCivil">Vui lòng chọn loại xét nghiệm.</div>
           </div>
 
-          <!-- Phương thức lấy mẫu -->
           <div class="form-group">
             <label>Phương thức lấy mẫu <span class="required">*</span></label>
             <Multiselect v-model="form.sampleMethod" :options="sampleMethods" placeholder="Chọn phương thức"
@@ -30,7 +28,6 @@
             <div class="error" v-if="errors.sampleMethod">Vui lòng chọn phương thức lấy mẫu.</div>
           </div>
 
-          <!-- Thời gian nhận kết quả -->
           <div class="form-group">
             <label>Thời gian nhận kết quả <span class="required">*</span></label>
             <Multiselect v-model="form.resultTime" :options="resultTimes" placeholder="Chọn thời gian" label="label"
@@ -38,7 +35,6 @@
             <div class="error" v-if="errors.resultTime">Vui lòng chọn thời gian nhận kết quả.</div>
           </div>
 
-          <!-- Ngày thu mẫu -->
           <div class="form-group">
             <label>Ngày thu mẫu <span class="required">*</span></label>
             <input type="date" v-model="form.sampleDate" :disabled="form.sampleMethod?.value !== 1"
@@ -46,7 +42,6 @@
             <div class="error" v-if="errors.sampleDate">Vui lòng chọn ngày thu mẫu.</div>
           </div>
 
-          <!-- Tổng thanh toán -->
           <div class="form-group total-price" v-if="totalPrice !== null">
             <span class="label">Tổng giá trị đơn hàng:</span>
             <span class="value">
@@ -61,10 +56,11 @@
 
           <button type="submit" class="btn btn-register" :disabled="isSubmitting">
             <span v-if="isSubmitting">
-              <i class="bi bi-arrow-repeat spin"></i> Đang tạo...
+              <i class="bi bi-arrow-repeat spin"></i>
+              {{ editData ? 'Đang cập nhật...' : 'Đang tạo...' }}
             </span>
             <span v-else>
-              Tạo đơn hàng
+              {{ editData ? 'Cập nhật' : 'Tạo đơn hàng' }}
             </span>
           </button>
 
@@ -80,8 +76,11 @@ import axios from '@/utils/axios';
 import { toastError, toastSuccess } from '@/utils/toast';
 
 export default {
-  props: ['show'],
-  emits: ['close'],
+  props: {
+    show: Boolean,
+    editData: Object,
+  },
+  emits: ['close', 'updated'],
   components: { Multiselect },
   watch: {
     form: {
@@ -97,11 +96,20 @@ export default {
     },
     show(newVal) {
       if (!newVal) {
-        this.resetForm()
+        this.resetForm();
+      } else {
+        this.fetchOptions();
       }
     },
+    editData: {
+      immediate: true,
+      handler(newVal) {
+        if (this.show && newVal && this.services.length > 0) {
+          this.loadFormFromEditData();
+        }
+      }
+    }
   },
-
   data() {
     return {
       form: {
@@ -136,6 +144,9 @@ export default {
         this.services = res1.data.data?.items || [];
         this.resultTimes = res2.data.data || [];
         this.sampleMethods = res3.data.data || [];
+        if (this.show && this.editData) {
+          this.loadFormFromEditData();
+        }
       });
     },
     validateForm() {
@@ -171,19 +182,23 @@ export default {
             : null,
         totalPrice: this.totalPrice ?? 0
       };
+      const request = this.editData
+        ? axios.put(`/bookings/${this.editData.id}`, payload)
+        : axios.post('/bookings', payload);
 
-      axios
-        .post('/bookings', payload)
+      request
         .then((res) => {
           if (res.data.success) {
-            toastSuccess(res.data.message || 'Tạo đơn hàng thành công!');
+            toastSuccess(res.data.message || (this.editData ? 'Cập nhật thành công!' : 'Tạo đơn hàng thành công!'));
             this.$emit('close');
-            this.$emit('created');
+            this.$emit(this.editData ? 'updated' : 'created');
           } else {
-            toastError(res.data.message || 'Tạo thất bại!');
+            toastError(res.data.message || 'Thao tác thất bại!');
           }
         })
-        .catch(() => toastError('Lỗi gửi dữ liệu!'))
+        .catch(() => {
+          toastError('Lỗi gửi dữ liệu!');
+        })
         .finally(() => {
           this.isSubmitting = false;
         });
@@ -229,9 +244,20 @@ export default {
       };
       this.errors = {};
       this.totalPrice = null;
+    },
+    loadFormFromEditData() {
+      const o = this.editData;
+      this.form.service = this.services.find(s => s.name === o.serviceName);
+      this.form.isCivil = this.civilOptions.find(opt => opt.value === o.isCivil);
+      this.form.sampleMethod = this.sampleMethods.find(opt => opt.value === o.sampleMethod);
+      this.form.resultTime = this.resultTimes.find(opt => opt.value === o.resultTime);
+      this.form.sampleDate = o.sampleDate ? this.convertDateForInput(o.sampleDate) : '';
+      this.totalPrice = o.totalPrice;
+    },
+    convertDateForInput(dateStr) {
+      const [dd, mm, yyyy] = dateStr.split('-');
+      return `${yyyy}-${mm}-${dd}`;
     }
-
-
   },
 };
 </script>
@@ -397,6 +423,7 @@ label {
 .total-price .value:has(template:only-child) {
   color: #999;
 }
+
 .spin {
   display: inline-block;
   animation: spin 1s linear infinite;
@@ -406,14 +433,15 @@ label {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
+
 .btn-register:disabled {
-  background-color: #3f51b5 !important; 
-  color: #e3e7ff !important;           
-  opacity: 0.5;                      
+  background-color: #3f51b5 !important; color: #e3e7ff !important;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 </style>

@@ -39,7 +39,7 @@
               <i class="bi bi-pencil-square"></i>
             </button>
             <button class="btn btn-sm btn-outline-danger me-1" :disabled="order.status !== 0"
-              :class="{ 'disabled-btn': order.status !== 0 }" title="Hủy đơn hàng">
+              :class="{ 'disabled-btn': order.status !== 0 }" title="Hủy đơn hàng" @click="deleteOrder(order.id)">
               <i class="bi bi-x-circle"></i>
             </button>
             <button class="btn btn-sm btn-outline-success" title="Thanh toán">
@@ -77,6 +77,8 @@ import {
   getEnumLabel,
 } from '@/enums/enum';
 import Paginate from '@/components/common/paginate.vue';
+import { toastError, toastSuccess } from '@/utils/toast';
+import Swal from 'sweetalert2';
 
 export default {
   props: {
@@ -161,6 +163,34 @@ export default {
     },
     onOrderUpdated() {
       this.fetchOrders();
+    },
+    deleteOrder(orderId) {
+      Swal.fire({
+        title: 'Xác nhận hủy đơn hàng?',
+        text: 'Bạn sẽ không thể hoàn tác thao tác này!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Không',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios
+            .delete(`/bookings/${orderId}`)
+            .then(res => {
+              if (res.data.success) {
+                toastSuccess(res.data.message || 'Đơn hàng đã được hủy thành công!');
+                this.fetchOrders();
+              } else {
+                toastError(res.data.message || 'Không thể hủy đơn hàng.');
+              }
+            })
+            .catch(() => {
+              toastError('Lỗi khi gửi yêu cầu hủy đơn hàng.');
+            });
+        }
+      });
     }
   },
 };

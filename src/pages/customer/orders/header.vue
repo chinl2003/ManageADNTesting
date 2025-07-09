@@ -1,34 +1,26 @@
-<!-- Header.vue -->
 <template>
   <div class="row mb-4 align-items-center">
     <div class="col-md-5">
       <h2 class="title">Danh sách đơn hàng</h2>
     </div>
     <div class="col-md-7 d-flex justify-content-end align-items-center gap-3">
-      <multiselect
-        v-model="selectedStatus"
-        :options="statusOptions"
-        placeholder="Chọn trạng thái"
-        label="label"
-        track-by="value"
-        class="custom-multiselect"
-        @input="emitFilter"
-      />
+      <multiselect v-model="selectedStatus" :options="statusOptions" placeholder="Chọn trạng thái" label="label"
+        track-by="value" class="custom-multiselect" @update:modelValue="onStatusChange" />
       <button class="btn btn-add" @click="showModal = true">
         <font-awesome-icon :icon="['fas', 'plus']" class="icon" />
         Thêm đơn hàng
       </button>
     </div>
     <Teleport to="body">
-      <CreateBookingModal :show="showModal" @close="showModal = false" />
+      <CreateBookingModal :show="showModal" @close="showModal = false" @created="onCreated" />
     </Teleport>
-    
   </div>
 </template>
 
 <script>
 import Multiselect from 'vue-multiselect'
 import CreateBookingModal from './create.vue'
+import { BookingStatus } from '@/enums/enum'
 
 export default {
   components: { Multiselect, CreateBookingModal },
@@ -36,21 +28,35 @@ export default {
     return {
       selectedStatus: null,
       showModal: false,
-      statusOptions: [
-        { value: '', label: 'Tất cả trạng thái' },
-        { value: 'Đang xử lý', label: 'Đang xử lý' },
-        { value: 'Hoàn thành', label: 'Hoàn thành' },
-        { value: 'Đã hủy', label: 'Đã hủy' },
-      ],
+      statusOptions: [],
     }
   },
+  created() {
+    this.statusOptions = this.generateStatusOptions()
+  },
   methods: {
-    emitFilter() {
-      this.$emit('filter', this.selectedStatus?.value || '')
+    onStatusChange(val) {
+      this.$emit('filter', val?.value ?? '')
     },
+    generateStatusOptions() {
+      const options = [{ value: '', label: 'Tất cả trạng thái' }]
+      for (const key in BookingStatus) {
+        if (!isNaN(key)) {
+          options.push({
+            value: Number(key),
+            label: BookingStatus[key],
+          })
+        }
+      }
+      return options
+    },
+    onCreated() {
+      this.$emit('created')
+    }
   },
 }
 </script>
+
 
 <style scoped>
 @import "vue-multiselect/dist/vue-multiselect.min.css";
@@ -93,22 +99,22 @@ export default {
 }
 
 :deep(.multiselect__option--highlight) {
-    background-color: #4257b2 !important;
-    color: white !important;
+  background-color: #4257b2 !important;
+  color: white !important;
 }
 
 :deep(.multiselect__option--selected::after) {
-    display: none !important;
-    content: none !important;
+  display: none !important;
+  content: none !important;
 }
 
 :deep(.multiselect__option--selected::before) {
-    display: none !important;
-    content: none !important;
+  display: none !important;
+  content: none !important;
 }
 
 :deep(.multiselect__option::after) {
-    display: none !important;
-    content: none !important;
+  display: none !important;
+  content: none !important;
 }
 </style>

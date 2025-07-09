@@ -59,7 +59,15 @@
             </span>
           </div>
 
-          <button type="submit" class="btn btn-register">Tạo đơn hàng</button>
+          <button type="submit" class="btn btn-register" :disabled="isSubmitting">
+            <span v-if="isSubmitting">
+              <i class="bi bi-arrow-repeat spin"></i> Đang tạo...
+            </span>
+            <span v-else>
+              Tạo đơn hàng
+            </span>
+          </button>
+
         </div>
       </form>
     </div>
@@ -86,7 +94,12 @@ export default {
           this.totalPrice = null;
         }
       }
-    }
+    },
+    show(newVal) {
+      if (!newVal) {
+        this.resetForm()
+      }
+    },
   },
 
   data() {
@@ -98,6 +111,7 @@ export default {
         resultTime: null,
         sampleDate: '',
       },
+      isSubmitting: false,
       errors: {},
       services: [],
       resultTimes: [],
@@ -139,6 +153,7 @@ export default {
       }
     },
     submitForm() {
+      this.isSubmitting = true;
       const f = this.form;
       const formatDate = (dateStr) => {
         if (!dateStr) return null;
@@ -161,13 +176,17 @@ export default {
         .post('/bookings', payload)
         .then((res) => {
           if (res.data.success) {
-            toastSuccess('Tạo đơn hàng thành công!');
+            toastSuccess(res.data.message || 'Tạo đơn hàng thành công!');
             this.$emit('close');
+            this.$emit('created');
           } else {
             toastError(res.data.message || 'Tạo thất bại!');
           }
         })
-        .catch(() => toastError('Lỗi gửi dữ liệu!'));
+        .catch(() => toastError('Lỗi gửi dữ liệu!'))
+        .finally(() => {
+          this.isSubmitting = false;
+        });
     },
     formatCurrency(amount) {
       if (typeof amount !== 'number') return '';
@@ -200,6 +219,17 @@ export default {
           toastError('Lỗi khi lấy giá dịch vụ.');
         });
     },
+    resetForm() {
+      this.form = {
+        service: null,
+        isCivil: null,
+        sampleMethod: null,
+        resultTime: null,
+        sampleDate: '',
+      };
+      this.errors = {};
+      this.totalPrice = null;
+    }
 
 
   },
@@ -366,5 +396,24 @@ label {
 
 .total-price .value:has(template:only-child) {
   color: #999;
+}
+.spin {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.btn-register:disabled {
+  background-color: #3f51b5 !important; 
+  color: #e3e7ff !important;           
+  opacity: 0.5;                      
+  cursor: not-allowed;
 }
 </style>

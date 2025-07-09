@@ -1,56 +1,199 @@
 <template>
   <div class="order-list">
-    <!-- TABLE HEADER -->
-    <div class="row fw-semibold border-bottom pb-2 mb-2">
-      <div class="col-md-2">Mã đơn</div>
-      <div class="col-md-3">Ngày đặt</div>
-      <div class="col-md-3">Trạng thái</div>
-      <div class="col-md-4">Thao tác</div>
+    <!-- Loading spinner -->
+    <div v-if="isLoading" class="loading-spinner">
+      <div class="spinner-border text-primary" role="status"></div>
     </div>
 
-    <!-- TABLE ROWS -->
-    <div
-      v-for="order in filteredOrders"
-      :key="order.id"
-      class="row py-2 border-bottom align-items-center"
-    >
-      <div class="col-md-2">{{ order.code }}</div>
-      <div class="col-md-3">{{ order.date }}</div>
-      <div class="col-md-3">{{ order.status }}</div>
-      <div class="col-md-4">
-        <button class="btn btn-sm btn-outline-primary me-2">Xem</button>
-        <button class="btn btn-sm btn-outline-secondary">Tải kết quả</button>
+    <!-- Table (Header + Rows or No data message) -->
+    <div v-else>
+      <!-- TABLE HEADER -->
+      <div class="row fw-semibold border-bottom">
+        <div class="col">Mã đơn hàng</div>
+        <div class="col">Loại xét nghiệm</div>
+        <div class="col">Loại dịch vụ</div>
+        <div class="col">Phương thức lấy mẫu</div>
+        <div class="col">Thời gian nhận kết quả</div>
+        <div class="col">Tổng tiền</div>
+        <div class="col">Ngày thu mẫu</div>
+        <div class="col">Ngày đặt</div>
+        <div class="col">Trạng thái</div>
+        <div class="col text-center"></div>
       </div>
+
+      <!-- TABLE BODY -->
+      <div v-if="orders.length > 0">
+        <div v-for="order in orders" :key="order.id" class="row content py-2 border-bottom align-items-center">
+          <div class="col">{{ order.code }}</div>
+          <div class="col">{{ order.isCivil ? 'Dân sự' : 'Hành chính' }}</div>
+          <div class="col">{{ order.serviceName }}</div>
+          <div class="col">{{ getSampleMethodLabel(order.sampleMethod) }}</div>
+          <div class="col">{{ getResultTimeLabel(order.resultTime) }}</div>
+          <div class="col">{{ formatCurrency(order.totalPrice) }}</div>
+          <div class="col">{{ order.sampleDate || '-' }}</div>
+          <div class="col">{{ order.bookingDate }}</div>
+          <div class="col">{{ getStatusLabel(order.status) }}</div>
+          <div class="col text-center">
+            <button class="btn btn-sm btn-outline-primary me-1" title="Chỉnh sửa">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger me-1" title="Hủy đơn hàng">
+              <i class="bi bi-x-circle"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-success" title="Thanh toán">
+              <i class="bi bi-credit-card"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO DATA ROW -->
+      <div v-else class="row py-4 content text-center text-muted">
+        <div class="col">Không có dữ liệu</div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-3">
+      <Paginate :total-items="totalItems" :items-per-page="pageSize" v-model:current-page="currentPage" />
     </div>
   </div>
 </template>
 
+
 <script>
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import axios from '@/utils/axios';
+import {
+  ResultTimeType,
+  SampleMethod,
+  BookingStatus,
+  getEnumLabel,
+} from '@/enums/enum';
+import Paginate from '@/components/common/paginate.vue';
+
 export default {
   props: {
-    filterStatus: String,
+    filterStatus: [String, Number],
   },
+  components: { Paginate },
   data() {
     return {
-      orders: [
-        { id: 1, code: 'ORD001', date: '28/06/2025', status: 'Đang xử lý' },
-        { id: 2, code: 'ORD002', date: '25/06/2025', status: 'Hoàn thành' },
-        { id: 3, code: 'ORD003', date: '20/06/2025', status: 'Đã hủy' },
-      ],
-    }
+      orders: [],
+      currentPage: 1,
+      pageSize: 20,
+      totalItems: 0,
+      isLoading: false,
+    };
   },
-  computed: {
-    filteredOrders() {
-      if (!this.filterStatus) return this.orders
-      return this.orders.filter((o) => o.status === this.filterStatus)
+  watch: {
+    currentPage() {
+      this.fetchOrders();
+    },
+    filterStatus() {
+      this.currentPage = 1;
+      this.fetchOrders();
     },
   },
-}
+  mounted() {
+    this.fetchOrders();
+  },
+  methods: {
+    fetchOrders() {
+      this.isLoading = true;
+      axios
+        .get('/bookings/get-list', {
+          params: {
+            page: this.currentPage,
+            pageSize: this.pageSize,
+            status: this.filterStatus || null,
+          },
+        })
+        .then((res) => {
+          if (res.data.success) {
+            this.orders = res.data.data.items;
+            this.totalItems = res.data.data.totalItems;
+          } else {
+            this.orders = [];
+            this.totalItems = 0;
+          }
+        })
+        .catch((err) => {
+          console.error('Lỗi khi gọi API lấy đơn hàng:', err);
+          this.orders = [];
+          this.totalItems = 0;
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
+    },
+    formatCurrency(value) {
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+        minimumFractionDigits: 0,
+      }).format(value);
+    },
+    getSampleMethodLabel(value) {
+      return getEnumLabel(SampleMethod, value);
+    },
+    getResultTimeLabel(value) {
+      return getEnumLabel(ResultTimeType, value);
+    },
+    getStatusLabel(value) {
+      return getEnumLabel(BookingStatus, value);
+    },
+  },
+};
 </script>
 
 <style scoped>
 .order-list {
   font-size: 0.95rem;
   color: #444;
+}
+
+.row>.col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.row>.col.text-center {
+  justify-content: center;
+}
+
+.fw-semibold {
+  font-weight: 600;
+  font-size: 1.05rem;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 5px 5px 0 0;
+}
+
+.content {
+  border: 1px solid #ddd;
+  border-radius: 0 0 5px 5px;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.spinner-border.text-primary {
+  color: #2b3f91 !important;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.no-data {
+  text-align: center;
+  font-style: italic;
+  padding: 2rem;
+  color: #888;
 }
 </style>

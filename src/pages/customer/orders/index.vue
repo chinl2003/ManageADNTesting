@@ -1,8 +1,8 @@
 <template>
   <div class="orders-wrapper">
     <div class="orders-container animate-fade">
-      <Header @filter="setFilter" @add="handleAddOrder" />
-      <Main :filterStatus="status" />
+      <Header @filter="setFilter" @add="handleAddOrder" @created="reloadOrders" />
+      <Main ref="mainRef" :filterStatus="status" />
     </div>
   </div>
 </template>
@@ -25,6 +25,9 @@ export default {
     handleAddOrder() {
       this.$router.push('/booking')
     },
+    reloadOrders() {
+      this.$refs.mainRef?.fetchOrders()
+    }
   },
 }
 </script>

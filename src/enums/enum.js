@@ -10,6 +10,16 @@ export const SampleMethod = {
   2: 'Thu tại cơ sở y tế'
 };
 
+export const BookingStatus = {
+  0: 'Đang xử lý',
+  1: 'Đã thanh toán',
+  2: 'Đã nhận kit thu mẫu',
+  3: 'Trung tâm đã nhận mẫu',
+  4: 'Đang xét nghiệm',
+  5: 'Đã hoàn thành',
+  6: 'Đã hủy',
+};
+
 /**
  * Trả về label dựa trên enum object
  * @param {object} enumObj - Ví dụ: ResultTimeType

@@ -10,6 +10,7 @@ import AccountManagement from "@/pages/admin/account/account-management.vue";
 import ServiceManagement from "@/pages/admin/service/service-management.vue";
 import ServicePriceManagement from "@/pages/admin/service-price/service-price-management.vue";
 import OrderList from "@/pages/customer/orders/index.vue";
+import TransactionHistory from "@/pages/customer/transactions/index.vue";
 
 const routes = [
   {
@@ -31,7 +32,13 @@ const routes = [
         path: "my-orders",
         name: "OrderList",
         component: OrderList
-      }
+      },
+      {
+        path: "transaction-history",
+        name: "TransactionHistory",
+        component: TransactionHistory
+      },
+
     ]
   },
   {

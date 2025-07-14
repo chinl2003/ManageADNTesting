@@ -1,13 +1,12 @@
 <template>
   <div class="order-list">
-    <!-- Loading spinner -->
+
     <div v-if="isLoading" class="loading-spinner">
       <div class="spinner-border text-primary" role="status"></div>
     </div>
 
-    <!-- Table (Header + Rows or No data message) -->
     <div v-else>
-      <!-- TABLE HEADER -->
+
       <div class="row fw-semibold border-bottom">
         <div class="col">Mã đơn hàng</div>
         <div class="col">Loại xét nghiệm</div>
@@ -21,7 +20,6 @@
         <div class="col text-center"></div>
       </div>
 
-      <!-- TABLE BODY -->
       <div v-if="orders.length > 0">
         <div v-for="order in orders" :key="order.id" class="row content py-2 border-bottom align-items-center">
           <div class="col">{{ order.code }}</div>
@@ -42,25 +40,26 @@
               :class="{ 'disabled-btn': order.status !== 0 }" title="Hủy đơn hàng" @click="deleteOrder(order.id)">
               <i class="bi bi-x-circle"></i>
             </button>
-            <button class="btn btn-sm btn-outline-success" title="Thanh toán">
+            <button class="btn btn-sm btn-outline-success" :disabled="order.status !== 0"
+              :class="{ 'disabled-btn': order.status !== 0 }" title="Thanh toán" @click="payOrder(order.id)">
               <i class="bi bi-credit-card"></i>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- NO DATA ROW -->
       <div v-else class="row py-4 content text-center text-muted">
         <div class="col">Không có dữ liệu</div>
       </div>
     </div>
 
-    <!-- Pagination -->
     <div class="d-flex justify-content-center mt-3">
       <Paginate :total-items="totalItems" :items-per-page="pageSize" v-model:current-page="currentPage" />
     </div>
     <Teleport to="body">
       <BookingModal :show="showEditModal" :edit-data="selectedOrder" @close="onModalClose" @updated="onOrderUpdated" />
+      <PaymentModal :show="showPaymentModal" :order="selectedPaymentOrder" @close="showPaymentModal = false"
+        @confirm="onPaymentConfirmed" />
     </Teleport>
   </div>
 </template>
@@ -70,6 +69,7 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import axios from '@/utils/axios';
 import BookingModal from './create.vue';
+import PaymentModal from '../orders/payment-result.vue';
 import {
   ResultTimeType,
   SampleMethod,
@@ -84,7 +84,7 @@ export default {
   props: {
     filterStatus: [String, Number],
   },
-  components: { Paginate, BookingModal },
+  components: { Paginate, BookingModal, PaymentModal },
   data() {
     return {
       orders: [],
@@ -94,6 +94,8 @@ export default {
       isLoading: false,
       selectedOrder: null,
       showEditModal: false,
+      selectedPaymentOrder: null,
+      showPaymentModal: false,
     };
   },
   watch: {
@@ -191,6 +193,36 @@ export default {
             });
         }
       });
+    },
+    payOrder(orderId) {
+      this.selectedPaymentOrder = this.orders.find(o => o.id === orderId);
+      this.showPaymentModal = true;
+    },
+    onPaymentConfirmed({ method, bank, amount }) {
+      this.isLoading = true;
+      axios
+        .get(`/bookings/${this.selectedPaymentOrder.id}/create-payment-url`, {
+          params: {
+            method,
+            bank,
+            amount,
+          },
+        })
+        .then((res) => {
+          if (res.data.success) {
+            toastSuccess(res.data.message || 'Thanh toán thành công!');
+            this.fetchOrders();
+          } else {
+            toastError(res.data.message || 'Thanh toán thất bại!');
+          }
+        })
+        .catch(() => {
+          toastError('Quá trình thanh toán xảy ra lỗi. Vui lòng thử lại sau.');
+        })
+        .finally(() => {
+          this.isLoading = false;
+          this.showPaymentModal = false;
+        });
     }
   },
 };
@@ -245,8 +277,13 @@ export default {
   padding: 2rem;
   color: #888;
 }
+
 .action-btn.disabled-btn {
   opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+button:disabled {
   cursor: not-allowed !important;
 }
 </style>

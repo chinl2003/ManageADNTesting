@@ -20,6 +20,12 @@ export const BookingStatus = {
   6: 'Đã hủy',
 };
 
+export const TransactionStatus = {
+  0: 'Chưa được xử lý',
+  1: 'Thành công',
+  2: 'Thất bại',
+};
+
 /**
  * Trả về label dựa trên enum object
  * @param {object} enumObj - Ví dụ: ResultTimeType
@@ -28,3 +34,10 @@ export const BookingStatus = {
 export function getEnumLabel(enumObj, value) {
   return enumObj[value] || 'Không rõ';
 }
+
+export const transactionStatusOptions = Object.entries(TransactionStatus).map(
+  ([value, label]) => ({
+    value: parseInt(value),
+    label,
+  })
+);

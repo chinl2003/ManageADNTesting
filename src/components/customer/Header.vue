@@ -38,6 +38,10 @@
         <font-awesome-icon :icon="['fas', 'star']" class="icon" />
         <span class="label">Đánh giá và phản hồi</span>
       </div>
+      <div class="dropdown-item" @click="goToTransactionHistory">
+        <font-awesome-icon :icon="['fas', 'file-invoice-dollar']" class="icon" />
+        <span class="label">Lịch sử giao dịch</span>
+      </div>
       <div class="dropdown-item">
         <font-awesome-icon :icon="['fas', 'id-card']" class="icon" />
         <span class="label">Hồ sơ của tôi</span>
@@ -84,6 +88,10 @@ export default {
     goToMyOrders() {
       this.dropdownOpen = false
       this.$router.push('/my-orders')
+    },
+    goToTransactionHistory() {
+      this.dropdownOpen = false
+      this.$router.push('/transaction-history')
     }
   }
 }

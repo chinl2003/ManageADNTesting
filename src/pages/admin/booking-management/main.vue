@@ -32,6 +32,7 @@
           <div class="col d-flex justify-content-center gap-2">
             <button
               class="btn btn-sm btn-outline-success"
+              :disabled="tx.status === 2"
               @click="approveBooking(tx)"
               title="Duyệt đơn hàng"
             >
@@ -70,6 +71,7 @@ import Paginate from '@/components/common/paginate.vue';
 import { TransactionStatus, getEnumLabel, BookingStatus } from '@/enums/enum';
 import Multiselect from 'vue-multiselect';
 import UpdateInfoModal from "./update-info.vue"
+import { toastSuccess, toastError } from '@/utils/toast'
 
 export default {
   props: {
@@ -101,6 +103,32 @@ export default {
     this.fetchBookings();
   },
   methods: {
+    approveBooking(tx) {
+      if (!tx || !tx.id) return;
+
+      const payload = {
+        bookingId: tx.id,
+        status: 2, 
+      };
+      console.log("payload", payload)
+      this.isLoading = true;
+      axios
+        .post('/bookings/update-booking', payload)
+        .then((res) => {
+          if (res.status === 200) {
+            toastSuccess('Duyệt đơn hàng thành công!');
+            this.fetchBookings(); 
+          } else {
+           toastError('Không thể duyệt đơn hàng');
+          }
+        })
+        .catch((err) => {
+         toastError('Có lỗi xảy ra khi duyệt đơn hàng');
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
+    },
     openUpdateModal(bookingId) {
       this.selectedBookingId = bookingId;
       this.showUpdateModal = true;

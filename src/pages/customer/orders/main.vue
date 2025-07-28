@@ -14,7 +14,7 @@
         <div class="col">Phương thức lấy mẫu</div>
         <div class="col">Thời gian nhận kết quả</div>
         <div class="col">Tổng tiền</div>
-        <div class="col">Ngày thu mẫu</div>
+        <div class="col">Người/Ngày thu mẫu</div>
         <div class="col">Ngày đặt</div>
         <div class="col">Trạng thái</div>
         <div class="col text-center"></div>
@@ -28,7 +28,7 @@
           <div class="col">{{ getSampleMethodLabel(order.sampleMethod) }}</div>
           <div class="col">{{ getResultTimeLabel(order.resultTime) }}</div>
           <div class="col">{{ formatCurrency(order.totalPrice) }}</div>
-          <div class="col">{{ order.sampleDate || '-' }}</div>
+          <div class="col">{{ order.sampleCollector }}<br /> {{ order.appointmentTime }}</div>
           <div class="col">{{ order.bookingDate }}</div>
           <div class="col">{{ getStatusLabel(order.status) }}</div>
           <div class="col text-center">

@@ -21,7 +21,7 @@
                 <div v-for="(tx, index) in bookings" :key="tx.id"
                     class="row content py-2 border-bottom align-items-center">
                     <div class="col">{{ index + 1 }}</div>
-                    <div class="col">ĐH-{{ tx.id }}</div>
+                    <div class="col">ĐH{{ tx.id }}</div>
                     <div class="col">{{ getStatusLabel(tx.status) }}</div>
                     <div class="col">{{ tx.customerFullName }}</div>
                     <div class="col">{{ formatDate(tx.bookingDate) }}</div>

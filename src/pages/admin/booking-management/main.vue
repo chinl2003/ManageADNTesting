@@ -22,7 +22,7 @@
       <div v-if="bookings.length > 0">
         <div v-for="(tx, index) in bookings" :key="tx.id" class="row content py-2 border-bottom align-items-center">
           <div class="col">{{ index + 1 }}</div>
-          <div class="col">BK-{{ tx.id }}</div>
+          <div class="col text-primary cursor-pointer" @click="openDetail(tx.id)">ĐH{{ tx.id }}</div>
           <div class="col">{{ tx.customerFullName }}</div>
           <div class="col">{{ formatCurrency(tx.totalPrice) }}</div>
           <div class="col">{{ getStatusTransaction(tx.statusTransaction) }}</div>
@@ -61,6 +61,7 @@
         @close="showUpdateModal = false"
         @updated="fetchBookings"
       />
+      <BookingDetailModal v-if="showDetail" :bookingId="selectedBookingId" @close="showDetail = false" />
     </Teleport>
   </div>
 </template>
@@ -71,13 +72,14 @@ import Paginate from '@/components/common/paginate.vue';
 import { TransactionStatus, getEnumLabel, BookingStatus } from '@/enums/enum';
 import Multiselect from 'vue-multiselect';
 import UpdateInfoModal from "./update-info.vue"
+import BookingDetailModal from "./booking-detail.vue"
 import { toastSuccess, toastError } from '@/utils/toast'
 
 export default {
   props: {
     filterStatus: [String, Number],
   },
-  components: { Paginate, Multiselect, UpdateInfoModal },
+  components: { Paginate, Multiselect, UpdateInfoModal, BookingDetailModal },
   data() {
     return {
       bookings: [],
@@ -88,6 +90,7 @@ export default {
       statusOptions: [],
       showUpdateModal: false,
       selectedBookingId: null,
+      showDetail: false
     };
   },
   watch: {
@@ -103,6 +106,10 @@ export default {
     this.fetchBookings();
   },
   methods: {
+    openDetail(id) {
+      this.selectedBookingId = id;
+      this.showDetail = true;
+    },
     approveBooking(tx) {
       if (!tx || !tx.id) return;
 
@@ -201,6 +208,10 @@ export default {
 
 .row>.col.text-center {
   justify-content: center;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .fw-semibold {

@@ -13,11 +13,12 @@ export const SampleMethod = {
 export const BookingStatus = {
   0: 'Đang xử lý',
   1: 'Đã thanh toán',
-  2: 'Đã nhận kit thu mẫu',
-  3: 'Trung tâm đã nhận mẫu',
-  4: 'Đang xét nghiệm',
-  5: 'Đã hoàn thành',
-  6: 'Đã hủy',
+  2: 'Đã duyệt',
+  3: 'Đã nhận kit thu mẫu',
+  4: 'Trung tâm đã nhận mẫu',
+  5: 'Đang xét nghiệm',
+  6: 'Đã hoàn thành',
+  7: 'Đã hủy',
 };
 
 export const TransactionStatus = {

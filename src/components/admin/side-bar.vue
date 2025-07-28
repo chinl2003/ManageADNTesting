@@ -25,7 +25,7 @@ export default {
         const currentLabel = inject('currentLabel');
 
         const menuItems = [
-            { name: 'Quản lí đơn hàng', icon: ['fas', 'shopping-cart'] },
+            { name: 'Quản lí đơn hàng', icon: ['fas', 'shopping-cart'], route: '/admin/booking-management' },
             { name: 'Quản lí phiếu thu mẫu', icon: ['fas', 'file-invoice'] },
             { name: 'Quản lí yêu cầu thu mẫu', icon: ['fas', 'file-signature'] },
             { name: 'Thống kê', icon: ['fas', 'chart-bar'] },

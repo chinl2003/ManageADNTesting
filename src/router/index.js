@@ -11,6 +11,7 @@ import ServiceManagement from "@/pages/admin/service/service-management.vue";
 import ServicePriceManagement from "@/pages/admin/service-price/service-price-management.vue";
 import OrderList from "@/pages/customer/orders/index.vue";
 import TransactionHistory from "@/pages/customer/transactions/index.vue";
+import BookingManagement from "@/pages/admin/booking-management/index.vue";
 
 const routes = [
   {
@@ -60,6 +61,11 @@ const routes = [
         path: "service-price-management",
         name: "ServicePriceManagement",
         component: ServicePriceManagement
+      },
+      {
+        path: "booking-management",
+        name: "BookingManagement",
+        component: BookingManagement
       },
     ],
     meta: {

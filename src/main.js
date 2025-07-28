@@ -24,7 +24,7 @@ import {
   faBars,
   faPlus,
   faTrash,
-  faEdit,faHistory, faVial, faIdCard, faFileInvoiceDollar, faPenToSquare, faFloppyDisk, faCheck, faRotate 
+  faEdit,faHistory, faVial, faIdCard, faFileInvoiceDollar, faPenToSquare, faFloppyDisk, faCheck, faRotate, faSearch
 } from "@fortawesome/free-solid-svg-icons";
 import router from "./router";
 import Toast, { POSITION } from "vue-toastification";
@@ -52,7 +52,7 @@ library.add(
   faBars,
   faPlus,
   faTrash,
-  faEdit, faHistory, faVial, faIdCard, faFileInvoiceDollar, faPenToSquare, faFloppyDisk, faCheck, faRotate 
+  faEdit, faHistory, faVial, faIdCard, faFileInvoiceDollar, faPenToSquare, faFloppyDisk, faCheck, faRotate, faSearch
 );
 
 const app = createApp(App);

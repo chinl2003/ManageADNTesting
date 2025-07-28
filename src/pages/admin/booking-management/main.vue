@@ -110,7 +110,6 @@ export default {
         bookingId: tx.id,
         status: 2, 
       };
-      console.log("payload", payload)
       this.isLoading = true;
       axios
         .post('/bookings/update-booking', payload)

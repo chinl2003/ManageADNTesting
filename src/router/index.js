@@ -13,6 +13,7 @@ import OrderList from "@/pages/customer/orders/index.vue";
 import TransactionHistory from "@/pages/customer/transactions/index.vue";
 import BookingManagement from "@/pages/admin/booking-management/index.vue";
 import AppointmentManagement from "@/pages/admin/appointment-management/index.vue"
+import SampleManagement from "@/pages/admin/sample-management/index.vue"
 
 const routes = [
   {
@@ -72,6 +73,11 @@ const routes = [
         path: "appointment-management",
         name: "AppointmentManagement",
         component: AppointmentManagement
+      },
+      {
+        path: "sample-management",
+        name: "SampleManagement",
+        component: SampleManagement
       },
     ],
     meta: {

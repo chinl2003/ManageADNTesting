@@ -106,7 +106,6 @@ export default {
                 })
                 .then((res) => {
                     if (res.data.success) {
-                        console.log("res", res);
                         this.bookings = res.data.data.items;
                         this.totalItems = res.data.data.totalItems;
                     } else {

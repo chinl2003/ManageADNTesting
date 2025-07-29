@@ -82,7 +82,6 @@ export default {
                 params: { search: query }
             })
                 .then((res) => {
-                    console.log("Res staff", res)
                     this.staffOptions = res.data.data || [];
                 })
                 .catch((err) => {

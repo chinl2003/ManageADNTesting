@@ -14,7 +14,7 @@ export const BookingStatus = {
   0: 'Đang xử lý',
   1: 'Đã thanh toán',
   2: 'Đã duyệt',
-  3: 'Đã nhận kit thu mẫu',
+  3: 'Đang giao kit thu mẫu',
   4: 'Trung tâm đã nhận mẫu',
   5: 'Đang xét nghiệm',
   6: 'Đã hoàn thành',

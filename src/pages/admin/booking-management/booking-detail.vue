@@ -72,7 +72,6 @@ export default {
                         IsAll: true,
                     },
                 });
-                console.log("res", res)
                 if (res.data.success && res.data.data.items.length > 0) {
                     const b = res.data.data.items[0];
                     this.order = b;

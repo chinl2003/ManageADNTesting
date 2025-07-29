@@ -120,7 +120,7 @@ export default {
           params: {
             page: this.currentPage,
             pageSize: this.pageSize,
-            status: this.filterStatus || null,
+            status: this.filterStatus !== '' ? this.filterStatus : null,
           },
         })
         .then((res) => {

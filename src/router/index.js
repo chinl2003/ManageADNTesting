@@ -14,6 +14,7 @@ import TransactionHistory from "@/pages/customer/transactions/index.vue";
 import BookingManagement from "@/pages/admin/booking-management/index.vue";
 import AppointmentManagement from "@/pages/admin/appointment-management/index.vue"
 import SampleManagement from "@/pages/admin/sample-management/index.vue"
+import SampleReceipts from "@/pages/customer/sample-receipt/index.vue";
 
 const routes = [
   {
@@ -40,6 +41,11 @@ const routes = [
         path: "transaction-history",
         name: "TransactionHistory",
         component: TransactionHistory
+      },
+      {
+        path: "my-sample-receipts",
+        name: "SampleReceipts",
+        component: SampleReceipts
       },
 
     ]

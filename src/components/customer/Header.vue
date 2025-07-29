@@ -30,6 +30,10 @@
         <font-awesome-icon :icon="['fas', 'history']" class="icon" />
         <span class="label">Đơn hàng của tôi</span>
       </div>
+      <div class="dropdown-item" @click="goToMySampleReceipts">
+        <font-awesome-icon :icon="['fas', 'vial']" class="icon" />
+        <span class="label">Xác nhận mẫu đã gửi</span>
+      </div>
       <div class="dropdown-item">
         <font-awesome-icon :icon="['fas', 'vial']" class="icon" />
         <span class="label">Kết quả xét nghiệm</span>
@@ -92,6 +96,10 @@ export default {
     goToTransactionHistory() {
       this.dropdownOpen = false
       this.$router.push('/transaction-history')
+    },
+    goToMySampleReceipts() {
+      this.dropdownOpen = false
+      this.$router.push('/my-sample-receipts')
     }
   }
 }

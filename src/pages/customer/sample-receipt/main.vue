@@ -9,37 +9,30 @@
 
       <div class="row fw-semibold border-bottom">
         <div class="col">STT</div>
-        <div class="col">Mã đơn hàng</div>
+        <div class="col">Mã phiếu thu mẫu</div>
         <div class="col">Khách hàng</div>
-        <div class="col">Tổng thanh toán</div>
-        <div class="col">Trạng thái thanh toán</div>
-        <div class="col">Trạng thái đơn hàng</div>
-        <div class="col">Ngày đặt hàng</div>
-        <div class="col">Ghi chú</div>
+        <div class="col">Trạng thái phiếu</div>
+        <div class="col">Ngày tạo</div>
         <div class="col"></div>
       </div>
 
       <div v-if="bookings.length > 0">
         <div v-for="(tx, index) in bookings" :key="tx.id" class="row content py-2 border-bottom align-items-center">
           <div class="col">{{ index + 1 }}</div>
-          <div class="col text-primary cursor-pointer" @click="openDetail(tx.id)">ĐH{{ tx.id }}</div>
+          <div class="col cursor-pointer text-primary text-decoration-underline" @click="openDetail(tx.id)">
+            {{ tx.code }}
+          </div>
           <div class="col">{{ tx.customerFullName }}</div>
-          <div class="col">{{ formatCurrency(tx.totalPrice) }}</div>
-          <div class="col">{{ getStatusTransaction(tx.statusTransaction) }}</div>
           <div class="col">{{ getStatusLabel(tx.status) }}</div>
-          <div class="col">{{ formatDate(tx.bookingDate) }}</div>
-          <div class="col">{{ tx.note }}</div>
-          <div class="col d-flex justify-content-center gap-2">
+          <div class="col">{{ formatDate(tx.createdAt) }}</div>
+          <div class="col">
             <button
-              class="btn btn-sm btn-outline-success"
-              :disabled="tx.status === 2"
-              @click="approveBooking(tx)"
-              title="Duyệt đơn hàng"
-            >
-              <font-awesome-icon icon="check" />
-            </button>
-            <button class="btn btn-sm btn-outline-danger"  @click="openUpdateModal(tx.id)" title="Cập nhật đơn hàng">
-              <font-awesome-icon icon="pen-to-square" />
+                class="btn btn-sm btn-success"
+                @click="openConfirmModal(tx.id)"
+                title="Xác nhận"
+                :disabled="tx.status === 1"
+                >
+                <font-awesome-icon icon="check" />
             </button>
           </div>
         </div>
@@ -54,14 +47,13 @@
       <Paginate :total-items="totalItems" :items-per-page="pageSize" v-model:current-page="currentPage" />
     </div>
     <Teleport to="body">
-      <UpdateInfoModal
-        v-if="showUpdateModal"
-        :show="showUpdateModal"
-        :booking-id="selectedBookingId"
-        @close="showUpdateModal = false"
-        @updated="fetchBookings"
-      />
-      <BookingDetailModal v-if="showDetail" :bookingId="selectedBookingId" @close="showDetail = false" />
+      <DetailModal v-if="showDetail" :sampleReceiptId="selectedSampleReceiptId" @close="showDetail = false" />
+      <ConfirmModal
+            v-if="showConfirmModal"
+            :sampleReceiptId="selectedSampleReceiptId"
+            @close="showConfirmModal = false"
+            @success="handleConfirmSuccess"
+        />
     </Teleport>
   </div>
 </template>
@@ -69,17 +61,18 @@
 <script>
 import axios from '@/utils/axios';
 import Paginate from '@/components/common/paginate.vue';
-import { TransactionStatus, getEnumLabel, BookingStatus } from '@/enums/enum';
+import { SampleReceiptStatus, getEnumLabel } from '@/enums/enum';
 import Multiselect from 'vue-multiselect';
-import UpdateInfoModal from "./update-info.vue"
-import BookingDetailModal from "./booking-detail.vue"
 import { toastSuccess, toastError } from '@/utils/toast'
+import DetailModal from './detail.vue';
+import { authState } from '@/store/auth';
+import ConfirmModal from './confirm.vue';
 
 export default {
   props: {
     filterStatus: [String, Number],
   },
-  components: { Paginate, Multiselect, UpdateInfoModal, BookingDetailModal },
+  components: { Paginate, Multiselect, DetailModal, ConfirmModal },
   data() {
     return {
       bookings: [],
@@ -89,25 +82,35 @@ export default {
       isLoading: false,
       statusOptions: [],
       showUpdateModal: false,
-      selectedBookingId: null,
-      showDetail: false
+      selectedSampleReceiptId: null,
+      showDetail: false,
+      showConfirmModal: false,
+      selectedSampleReceiptId: null,
     };
   },
   watch: {
     currentPage() {
-      this.fetchBookings();
+      this.fetchSampleReceipt();
     },
     filterStatus() {
       this.currentPage = 1;
-      this.fetchBookings();
+      this.fetchSampleReceipt();
     },
   },
   mounted() {
-    this.fetchBookings();
+    this.fetchSampleReceipt();
   },
   methods: {
+    openConfirmModal(id) {
+        this.selectedSampleReceiptId = id;
+        this.showConfirmModal = true;
+    },
+    handleConfirmSuccess() {
+        this.showConfirmModal = false;
+        this.fetchSampleReceipt();
+    },
     openDetail(id) {
-      this.selectedBookingId = id;
+      this.selectedSampleReceiptId = id;
       this.showDetail = true;
     },
     approveBooking(tx) {
@@ -123,7 +126,7 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             toastSuccess('Duyệt đơn hàng thành công!');
-            this.fetchBookings(); 
+            this.fetchSampleReceipt(); 
           } else {
            toastError('Không thể duyệt đơn hàng');
           }
@@ -136,18 +139,18 @@ export default {
         });
     },
     openUpdateModal(bookingId) {
-      this.selectedBookingId = bookingId;
+      this.selectedSampleReceiptId = bookingId;
       this.showUpdateModal = true;
     },
-    fetchBookings() {
+    fetchSampleReceipt() {
       this.isLoading = true;
       axios
-        .get('/bookings/get-list', {
+        .get('/sample-receipt/get-list', {
           params: {
             page: this.currentPage,
             pageSize: this.pageSize,
             status: this.filterStatus !== '' ? this.filterStatus : null,
-            IsAll: true,
+            customerFullName: authState.fullName || null,
           },
         })
         .then((res) => {
@@ -160,20 +163,13 @@ export default {
           }
         })
         .catch((err) => {
-          console.error('Lỗi khi lấy danh sách giao dịch:', err);
+          console.error('Lỗi khi lấy danh sách phiếu thu mẫu:', err);
           this.bookings = [];
           this.totalItems = 0;
         })
         .finally(() => {
           this.isLoading = false;
         });
-    },
-    formatCurrency(value) {
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-        minimumFractionDigits: 0,
-      }).format(value);
     },
     formatDate(date) {
       if (!date) return '';
@@ -184,10 +180,7 @@ export default {
       return `${day}-${month}-${year}`;
     },
     getStatusLabel(value) {
-      return getEnumLabel(BookingStatus, value);
-    },
-    getStatusTransaction(value) {
-      return getEnumLabel(TransactionStatus, value);
+      return getEnumLabel(SampleReceiptStatus, value);
     },
   },
 };

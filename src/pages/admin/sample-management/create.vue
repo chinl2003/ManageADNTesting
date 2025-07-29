@@ -12,20 +12,9 @@
           <div class="col-md-3">
             <div class="form-group mb-3">
               <label><strong class="text-dark">Đơn hàng <span class="text-danger">*</span></strong></label>
-              <multiselect
-                v-model="selectedBooking"
-                :options="bookingOptions"
-                :loading="isBookingLoading"
-                :searchable="true"
-                :clear-on-select="false"
-                :close-on-select="true"
-                placeholder="Chọn đơn hàng"
-                label="label"
-                track-by="id"
-                @search-change="fetchBookings"
-                @focus="fetchBookings"
-                class="input-vue"
-              />
+              <multiselect v-model="selectedBooking" :options="bookingOptions" :loading="isBookingLoading"
+                :searchable="true" :clear-on-select="false" :close-on-select="true" placeholder="Chọn đơn hàng"
+                label="label" track-by="id" @search-change="fetchBookings" @focus="fetchBookings" class="input-vue" />
             </div>
             <div class="text-end">
               <button class="btn btn-register btn-confirm half-width" @click="confirmBooking">Xác nhận</button>
@@ -58,7 +47,8 @@
               <div class="row mb-3">
                 <div class="col-12 mb-2">
                   <label class="form-label fw-bold">Người tiếp nhận</label>
-                  <input v-model="receiverName" type="text" class="form-control small-input" placeholder="Nhập họ và tên" />
+                  <input v-model="receiverName" type="text" class="form-control small-input"
+                    placeholder="Nhập họ và tên" />
                 </div>
                 <div class="col-12">
                   <label class="form-label fw-bold">Thời gian tiếp nhận mẫu</label>
@@ -68,11 +58,7 @@
 
               <!-- Add Sample Button -->
               <div class="text-end mb-2">
-                <button
-                  class="btn btn-register btn-icon-only"
-                  @click="addSampleRow"
-                  title="Thêm dòng mới"
-                >
+                <button class="btn btn-register btn-icon-only" @click="addSampleRow" title="Thêm dòng mới">
                   <font-awesome-icon icon="circle-plus" />
                 </button>
               </div>
@@ -88,23 +74,19 @@
                   <div class="col-1 text-end"></div>
                 </div>
 
-                <div
-                  v-for="(sample, index) in samples"
-                  :key="index"
-                  class="row py-2 align-items-center border-bottom"
-                >
+                <div v-for="(sample, index) in samples" :key="index" class="row py-2 align-items-center border-bottom">
                   <div class="col-1">{{ index + 1 }}</div>
-                  <div class="col-2"><input v-model="sample.type" type="text" class="form-control" placeholder="Loại mẫu" /></div>
+                  <div class="col-2"><input v-model="sample.type" type="text" class="form-control"
+                      placeholder="Loại mẫu" /></div>
                   <div class="col-2"><input v-model="sample.quantity" type="text" class="form-control" /></div>
-                  <div class="col-2"><input v-model="sample.status" type="text" class="form-control" placeholder="Tình trạng" /></div>
-                  <div class="col-2"><input v-model="sample.collector" type="text" class="form-control" placeholder="Người thu" /></div>
-                  <div class="col-2"><input v-model="sample.collectionTime" type="datetime-local" class="form-control" /></div>
+                  <div class="col-2"><input v-model="sample.status" type="text" class="form-control"
+                      placeholder="Tình trạng" /></div>
+                  <div class="col-2"><input v-model="sample.collector" type="text" class="form-control"
+                      placeholder="Người thu" /></div>
+                  <div class="col-2"><input v-model="sample.collectionTime" type="datetime-local"
+                      class="form-control" /></div>
                   <div class="col-1 text-end">
-                    <button
-                      class="btn btn-sm btn-outline-danger"
-                      @click="removeSampleRow(index)"
-                      title="Xóa"
-                    >
+                    <button class="btn btn-sm btn-outline-danger" @click="removeSampleRow(index)" title="Xóa">
                       <font-awesome-icon icon="trash-alt" />
                     </button>
                   </div>
@@ -127,6 +109,8 @@
 <script>
 import Multiselect from 'vue-multiselect'
 import axios from '@/utils/axios'
+import { toastSuccess, toastError, toastWarning } from '@/utils/toast';
+
 import {
   SampleMethod,
   getEnumLabel
@@ -177,7 +161,6 @@ export default {
           this.bookingOptions = []
         }
       } catch (err) {
-        console.error('Lỗi khi lấy danh sách đơn hàng:', err)
         this.bookingOptions = []
       } finally {
         this.isBookingLoading = false
@@ -196,7 +179,6 @@ export default {
           this.confirmedBooking = res.data.data.items[0]
         }
       } catch (error) {
-        console.error('Lỗi khi xác nhận booking:', error)
       }
     },
     getSampleMethodLabel(value) {
@@ -215,12 +197,35 @@ export default {
       this.samples.splice(index, 1)
     },
     saveForm() {
-      console.log('Dữ liệu đang lưu:', {
-        booking: this.confirmedBooking,
-        receiver: this.receiverName,
+      if (!this.confirmedBooking || !this.receiverName || !this.receiveDate || this.samples.length === 0) {
+        toastWarning('Vui lòng nhập đầy đủ thông tin');
+        return;
+      }
+
+      const payload = {
+        bookingId: this.confirmedBooking.id,
+        customerId: this.confirmedBooking.customerId,
+        customerFullName: this.confirmedBooking.customerFullName,
+        receiverName: this.receiverName,
         receiveDate: this.receiveDate,
-        samples: this.samples
-      })
+        samples: this.samples.map(s => ({
+          type: s.type,
+          quantity: Number(s.quantity),
+          status: s.status,
+          collector: s.collector,
+          collectionTime: s.collectionTime
+        }))
+      };
+
+      axios.post('/sample-receipt', payload)
+        .then((response) => {
+          toastSuccess('Tạo phiếu thu mẫu thành công!');
+          this.$emit('created');
+          this.$emit('close');
+        })
+        .catch((error) => {
+          toastError('Đã xảy ra lỗi khi lưu.');
+        });
     }
   }
 }
@@ -342,6 +347,9 @@ export default {
 
 .sample-table .row {
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .small-input {
@@ -350,7 +358,7 @@ export default {
 }
 
 .btn-icon-only {
-  border: 1px solid #3f51b5; 
+  border: 1px solid #3f51b5;
   background-color: transparent;
   color: #3f51b5;
   padding: 0.2rem 0.4rem;
@@ -359,15 +367,17 @@ export default {
 }
 
 .btn-icon-only:hover {
-  background-color: #3f51b5; 
+  background-color: #3f51b5;
   color: #ffffff;
 }
+
 input.form-control:focus {
-  border-width: 1px !important;      
-  box-shadow: none !important;      
-  border-color: #3f51b5 !important;   
+  border-width: 1px !important;
+  box-shadow: none !important;
+  border-color: #3f51b5 !important;
 }
-.footer-buttons{
+
+.footer-buttons {
   margin-left: auto;
 }
 </style>

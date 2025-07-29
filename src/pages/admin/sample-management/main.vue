@@ -13,21 +13,17 @@
         <div class="col">Khách hàng</div>
         <div class="col">Trạng thái phiếu</div>
         <div class="col">Ngày tạo</div>
-        <div class="col"></div>
       </div>
 
       <div v-if="bookings.length > 0">
         <div v-for="(tx, index) in bookings" :key="tx.id" class="row content py-2 border-bottom align-items-center">
           <div class="col">{{ index + 1 }}</div>
-          <div class="col"></div>
-          <div class="col"></div>
-          <div class="col"></div>
-          <div class="col"></div>
-          <div class="col d-flex justify-content-center gap-2">
-            <button class="btn btn-sm btn-outline-danger"  @click="openUpdateModal(tx.id)" title="Cập nhật phiếu">
-              <font-awesome-icon icon="pen-to-square" />
-            </button>
+          <div class="col cursor-pointer text-primary text-decoration-underline" @click="openDetail(tx.id)">
+            {{ tx.code }}
           </div>
+          <div class="col">{{ tx.customerFullName }}</div>
+          <div class="col">{{ getStatusLabel(tx.status) }}</div>
+          <div class="col">{{ formatDate(tx.createdAt) }}</div>
         </div>
       </div>
 
@@ -39,21 +35,25 @@
     <div class="d-flex justify-content-center mt-3">
       <Paginate :total-items="totalItems" :items-per-page="pageSize" v-model:current-page="currentPage" />
     </div>
+    <Teleport to="body">
+      <DetailModal v-if="showDetail" :sampleReceiptId="selectedSampleReceiptId" @close="showDetail = false" />
+    </Teleport>
   </div>
 </template>
 
 <script>
 import axios from '@/utils/axios';
 import Paginate from '@/components/common/paginate.vue';
-import { TransactionStatus, getEnumLabel, BookingStatus } from '@/enums/enum';
+import { SampleReceiptStatus, getEnumLabel } from '@/enums/enum';
 import Multiselect from 'vue-multiselect';
 import { toastSuccess, toastError } from '@/utils/toast'
+import DetailModal from './detail.vue';
 
 export default {
   props: {
     filterStatus: [String, Number],
   },
-  components: { Paginate, Multiselect },
+  components: { Paginate, Multiselect, DetailModal },
   data() {
     return {
       bookings: [],
@@ -63,25 +63,25 @@ export default {
       isLoading: false,
       statusOptions: [],
       showUpdateModal: false,
-      selectedBookingId: null,
+      selectedSampleReceiptId: null,
       showDetail: false
     };
   },
   watch: {
     currentPage() {
-      this.fetchBookings();
+      this.fetchSampleReceipt();
     },
     filterStatus() {
       this.currentPage = 1;
-      this.fetchBookings();
+      this.fetchSampleReceipt();
     },
   },
   mounted() {
-    this.fetchBookings();
+    this.fetchSampleReceipt();
   },
   methods: {
     openDetail(id) {
-      this.selectedBookingId = id;
+      this.selectedSampleReceiptId = id;
       this.showDetail = true;
     },
     approveBooking(tx) {
@@ -97,7 +97,7 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             toastSuccess('Duyệt đơn hàng thành công!');
-            this.fetchBookings(); 
+            this.fetchSampleReceipt(); 
           } else {
            toastError('Không thể duyệt đơn hàng');
           }
@@ -110,18 +110,17 @@ export default {
         });
     },
     openUpdateModal(bookingId) {
-      this.selectedBookingId = bookingId;
+      this.selectedSampleReceiptId = bookingId;
       this.showUpdateModal = true;
     },
-    fetchBookings() {
+    fetchSampleReceipt() {
       this.isLoading = true;
       axios
-        .get('/bookings/get-list', {
+        .get('/sample-receipt/get-list', {
           params: {
             page: this.currentPage,
             pageSize: this.pageSize,
             status: this.filterStatus || null,
-            IsAll: true,
           },
         })
         .then((res) => {
@@ -134,20 +133,13 @@ export default {
           }
         })
         .catch((err) => {
-          console.error('Lỗi khi lấy danh sách giao dịch:', err);
+          console.error('Lỗi khi lấy danh sách phiếu thu mẫu:', err);
           this.bookings = [];
           this.totalItems = 0;
         })
         .finally(() => {
           this.isLoading = false;
         });
-    },
-    formatCurrency(value) {
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-        minimumFractionDigits: 0,
-      }).format(value);
     },
     formatDate(date) {
       if (!date) return '';
@@ -158,10 +150,7 @@ export default {
       return `${day}-${month}-${year}`;
     },
     getStatusLabel(value) {
-      return getEnumLabel(BookingStatus, value);
-    },
-    getStatusTransaction(value) {
-      return getEnumLabel(TransactionStatus, value);
+      return getEnumLabel(SampleReceiptStatus, value);
     },
   },
 };

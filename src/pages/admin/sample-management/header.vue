@@ -19,7 +19,7 @@
 
 <script>
 import Multiselect from 'vue-multiselect'
-import { BookingStatus } from '@/enums/enum'
+import { SampleReceiptStatus } from '@/enums/enum'
 import CreateModal from './create.vue'
 
 export default {
@@ -40,11 +40,11 @@ export default {
     },
     generateStatusOptions() {
       const options = [{ value: '', label: 'Tất cả trạng thái' }]
-      for (const key in BookingStatus) {
+      for (const key in SampleReceiptStatus) {
         if (!isNaN(key)) {
           options.push({
             value: Number(key),
-            label: BookingStatus[key],
+            label: SampleReceiptStatus[key],
           })
         }
       }

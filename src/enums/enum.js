@@ -27,6 +27,10 @@ export const TransactionStatus = {
   2: 'Thất bại',
 };
 
+export const SampleReceiptStatus = {
+  0: 'Chờ xác nhận',
+  1: 'Đã xác nhận',
+};
 /**
  * Trả về label dựa trên enum object
  * @param {object} enumObj - Ví dụ: ResultTimeType

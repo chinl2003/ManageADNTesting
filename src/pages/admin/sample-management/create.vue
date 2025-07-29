@@ -224,7 +224,6 @@ export default {
           this.$emit('close');
         })
         .catch((error) => {
-          toastError('Đã xảy ra lỗi khi lưu.');
         });
     }
   }

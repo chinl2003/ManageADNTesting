@@ -2,7 +2,7 @@
   <div class="orders-wrapper">
     <div class="orders-container animate-fade">
       <Header @filter="setFilter" @add="handleAddOrder" @created="reloadOrders" />
-      <Main ref="mainRef" :filterStatus="status" @created="fetchSampleReceipt"/>
+      <Main ref="mainRef" :filterStatus="status"/>
     </div>
   </div>
 </template>
@@ -26,7 +26,7 @@ export default {
       this.$router.push('/admin/sample-management')
     },
     reloadOrders() {
-      this.$refs.mainRef?.fetchOrders()
+      this.$refs.mainRef?.fetchSampleReceipt()
     }
   },
 }

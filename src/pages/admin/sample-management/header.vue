@@ -12,7 +12,7 @@
       </button>
     </div>
     <Teleport to="body">
-      <CreateModal v-if="showModal" @close="showModal = false" @created="onCreated" />
+      <CreateModal v-if="showModal" @close="showModal = false" @created="handleCreated" />
     </Teleport>
   </div>
 </template>
@@ -50,8 +50,9 @@ export default {
       }
       return options
     },
-    onCreated() {
-      this.$emit('created')
+    handleCreated() {
+      this.$emit('created')     
+      this.showModal = false      
     }
   },
 }

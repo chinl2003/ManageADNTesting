@@ -22,6 +22,8 @@ import VerifyEmail from "@/components/customer/verify-email.vue";
 import IntroduceService from "@/pages/common/introduce-service.vue";
 import Instruction from "@/pages/common/instruction.vue";
 import Blogs from "@/pages/common/blogs.vue";
+import ForgotPassword from "@/pages/customer/forgot-password/index.vue";
+import ChangePassword from "@/pages/customer/forgot-password/change.vue";
 
 const routes = [
   {
@@ -80,6 +82,16 @@ const routes = [
         path: "veryfy-email",
         name: "VerifyEmail",
         component: VerifyEmail
+      },
+      {
+        path: "forgot-password",
+        name: "ForgotPassword",
+        component: ForgotPassword
+      },
+      {
+        path: "change-password",
+        name: "ChangePassword",
+        component: ChangePassword
       },
     ]
   },

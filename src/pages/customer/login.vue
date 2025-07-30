@@ -22,8 +22,8 @@
         </div>
 
         <div class="options">
-          <a class="forgot">Quên mật khẩu?</a>
-        </div>
+        <router-link class="forgot" to="/forgot-password">Quên mật khẩu?</router-link>
+      </div>
 
         <button type="submit" class="btn" :disabled="loading">
           Đăng nhập

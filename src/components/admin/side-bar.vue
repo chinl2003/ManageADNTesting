@@ -48,7 +48,6 @@ export default {
         { name: 'Quản lí kết quả xét nghiệm', icon: ['fas', 'file-signature'], route: '/admin/test-result-management' }
       ],
       Manager: [
-        { name: 'Thống kê', icon: ['fas', 'chart-bar'] },
         { name: 'Quản lí dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-management' },
         { name: 'Quản lí giá dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-price-management' },
         { name: 'Quản lí tài khoản', icon: ['fas', 'users'], route: '/admin/account-management' }

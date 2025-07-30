@@ -11,8 +11,6 @@
                 <div class="col">STT</div>
                 <div class="col">Mã phiếu kết quả</div>
                 <div class="col">Mã đơn hàng</div>
-                <div class="col">Trạng thái phiếu</div>
-                <div class="col">Ngày tạo</div>
                 <div class="col"></div>
             </div>
 
@@ -24,14 +22,10 @@
                         PKQ{{ tx.id }}
                     </div>
                     <div class="col">ĐH{{ tx.bookingId }}</div>
-                    <div class="col">{{ getStatusLabel(tx.status) }}</div>
-                    <div class="col">{{ formatDate(tx.createdAt) }}</div>
                     <div class="col">
-                        <button class="btn btn-sm btn-success d-flex align-items-center justify-content-center gap-1"
-                            @click="approveBooking(tx)" :disabled="userRole !== 'StaffManager' || tx.status === 1"
-                            title="Chỉ nhân viên quản lý mới được xác nhận">
-                            <i class="bi bi-check-lg"></i>
-                            Xác nhận
+                        <button class="btn btn-sm btn-danger d-flex align-items-center justify-content-center"
+                            @click="downloadPDF(tx.id)" title="Tải phiếu kết quả PDF">
+                            <i class="bi bi-download"></i>
                         </button>
                     </div>
 
@@ -59,15 +53,11 @@ import { SampleReceiptStatus, getEnumLabel } from '@/enums/enum';
 import Multiselect from 'vue-multiselect';
 import { toastSuccess, toastError } from '@/utils/toast'
 import DetailModal from './detail.vue';
-import { authState } from '@/store/auth.js';
-import Swal from 'sweetalert2';
+import html2pdf from 'html2pdf.js';
+import { createApp } from 'vue';
+import PdfRenderModal from './detail-pdf.vue';
 
 export default {
-    computed: {
-        userRole() {
-            return authState.role;
-        }
-    },
     props: {
         filterStatus: [String, Number],
     },
@@ -98,52 +88,9 @@ export default {
         this.fetchSampleReceipt();
     },
     methods: {
-        approveBooking(tx) {
-            console.log('Approving booking:', tx);
-            if (!tx || !tx.id) return;
-
-            Swal.fire({
-                title: 'Xác nhận kết quả xét nghiệm?',
-                text: 'Bạn có chắc muốn xác nhận thông tin của kết quả xét nghiệm này?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Xác nhận',
-                cancelButtonText: 'Hủy',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const payload = {
-                        testResultId: tx.id,
-                        status: 1
-                    };
-
-                    this.isLoading = true;
-                    axios
-                        .post('/test-result/update-status', payload)
-                        .then((res) => {
-                            if (res.status === 200) {
-                                toastSuccess('Xác nhận kết quả xét nghiệm thành công!');
-                                this.fetchSampleReceipt();
-                            } else {
-                                toastError('Không thể xác nhận kết quả');
-                            }
-                        })
-                        .catch((err) => {
-                            toastError('Có lỗi xảy ra khi xác nhận kết quả');
-                        })
-                        .finally(() => {
-                            this.isLoading = false;
-                        });
-                }
-            });
-        },
         openDetail(id) {
             this.selectedSampleReceiptId = id;
             this.showDetail = true;
-        },
-        openUpdateModal(bookingId) {
-            this.selectedSampleReceiptId = bookingId;
-            this.showUpdateModal = true;
         },
         fetchSampleReceipt() {
             this.isLoading = true;
@@ -184,6 +131,32 @@ export default {
         getStatusLabel(value) {
             return getEnumLabel(SampleReceiptStatus, value);
         },
+        async downloadPDF(sampleReceiptId) {
+            const container = document.createElement('div');
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            document.body.appendChild(container);
+
+            const app = createApp(PdfRenderModal, {
+                sampleReceiptId,
+                onReady: async () => {
+                    const elementToPrint = container.querySelector('.a4-paper');
+                    const opt = {
+                        margin: 0,
+                        filename: `phieu_ket_qua_${sampleReceiptId}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    await html2pdf().set(opt).from(elementToPrint).save();
+                    app.unmount();
+                    document.body.removeChild(container);
+                    toastSuccess('Tải file PDF kết quả thành công!');
+                }
+            });
+
+            app.mount(container);
+        }
     },
 };
 </script>

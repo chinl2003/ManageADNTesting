@@ -55,7 +55,7 @@
                                             <th rowspan="2" class="align-middle">STT</th>
                                             <th rowspan="2" class="align-middle">Locus</th>
                                             <template v-for="sample in bookingSamples" :key="sample.id">
-                                                <th colspan="2" class="align-middle">{{ sample.sampleType }}</th>
+                                                <th colspan="2" class="align-middle">{{ sample.sampleCode }}</th>
                                             </template>
                                             <th rowspan="2" class="align-middle">PI</th>
                                             <th rowspan="2" class="align-middle"></th>
@@ -172,7 +172,6 @@ export default {
                     }
                 })
                 if (res.data.success) {
-                    console.log("res", res)
                     this.bookingOptions = res.data.data.items.map((item) => ({
                         ...item,
                         label: `ĐH${item.id}`,

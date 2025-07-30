@@ -283,7 +283,7 @@ export default {
     color: #212529;
 }
 .a4-paper {
-  width: 794px; /* tương đương A4 ở 96dpi */
+  width: 794px; 
   background-color: white;
   padding: 40px;
   font-family: 'Times New Roman', serif;
@@ -316,4 +316,27 @@ border-bottom: 1px solid #ccc;
 .no-padding{
     padding: 0 !important;
 }
+@media print {
+  .modal-footer,
+  .close-btn {
+    display: none !important;
+  }
+
+  .modal-overlay {
+    background-color: white !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    box-shadow: none !important;
+  }
+
+  .modal-content {
+    box-shadow: none !important;
+    overflow: visible !important;
+    max-height: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+}
+
 </style>

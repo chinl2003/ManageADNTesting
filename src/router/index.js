@@ -16,6 +16,7 @@ import AppointmentManagement from "@/pages/admin/appointment-management/index.vu
 import SampleManagement from "@/pages/admin/sample-management/index.vue"
 import SampleReceipts from "@/pages/customer/sample-receipt/index.vue";
 import TestResultManagement from "@/pages/admin/test-result-management/index.vue";
+import MyResults from "@/pages/customer/result/index.vue";
 
 const routes = [
   {
@@ -48,7 +49,11 @@ const routes = [
         name: "SampleReceipts",
         component: SampleReceipts
       },
-
+      {
+        path: "my-results",
+        name: "MyResults",
+        component: MyResults
+      },
     ]
   },
   {

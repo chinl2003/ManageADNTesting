@@ -34,7 +34,7 @@
         <font-awesome-icon :icon="['fas', 'vial']" class="icon" />
         <span class="label">Xác nhận mẫu đã gửi</span>
       </div>
-      <div class="dropdown-item">
+      <div class="dropdown-item" @click="goToMyResults">
         <font-awesome-icon :icon="['fas', 'vial']" class="icon" />
         <span class="label">Kết quả xét nghiệm</span>
       </div>
@@ -100,6 +100,10 @@ export default {
     goToMySampleReceipts() {
       this.dropdownOpen = false
       this.$router.push('/my-sample-receipts')
+    },
+    goToMyResults(){
+      this.dropdownOpen = false
+      this.$router.push('/my-results')
     }
   }
 }

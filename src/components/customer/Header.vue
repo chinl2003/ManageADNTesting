@@ -1,31 +1,31 @@
 <template>
   <div class="relative">
-    <header
-      class="bg-white shadow-md px-6 flex justify-between items-center"
-      ref="headerRef"
-    >
+    <header class="bg-white shadow-md px-6 flex justify-between items-center" ref="headerRef">
       <nav class="nav-menu w-full">
         <div>Trang chủ</div>
         <div>Các loại dịch vụ</div>
         <div>Hướng dẫn thu mẫu</div>
         <div>Chia sẻ về ADN</div>
 
-        <div
-          class="relative flex items-center justify-center account-menu"
-          ref="accountRef"
-          @click="toggleDropdown"
-        >
+        <!-- Đã đăng nhập -->
+        <div v-if="isAuthenticated" class="relative flex items-center justify-center account-menu" ref="accountRef"
+          @click="toggleDropdown">
           <font-awesome-icon :icon="['fas', 'user']" class="mr-1" />
           <span>Tài khoản của tôi</span>
+        </div>
+
+        <!-- Chưa đăng nhập -->
+        <div v-else class="relative flex items-center justify-center account-menu cursor-pointer" @click="goToLogin">
+          <font-awesome-icon :icon="['fas', 'user']" class="mr-1" />
+          <span class="text-gray-500 hover:text-blue-600 transition">
+            Đăng nhập để tiếp tục trải nghiệm
+          </span>
         </div>
       </nav>
     </header>
 
-    <div
-      v-if="dropdownOpen"
-      class="dropdown-options bg-white shadow-md rounded-md z-50"
-      :style="{ position: 'absolute', top: dropdownTop + 'px', right: 0 }"
-    >
+    <div v-if="dropdownOpen" class="dropdown-options bg-white shadow-md rounded-md z-50"
+      :style="{ position: 'absolute', top: dropdownTop + 'px', right: 0 }">
       <div class="dropdown-item" @click="goToMyOrders">
         <font-awesome-icon :icon="['fas', 'history']" class="icon" />
         <span class="label">Đơn hàng của tôi</span>
@@ -38,45 +38,53 @@
         <font-awesome-icon :icon="['fas', 'vial']" class="icon" />
         <span class="label">Kết quả xét nghiệm</span>
       </div>
-      <div class="dropdown-item">
-        <font-awesome-icon :icon="['fas', 'star']" class="icon" />
-        <span class="label">Đánh giá và phản hồi</span>
-      </div>
       <div class="dropdown-item" @click="goToTransactionHistory">
         <font-awesome-icon :icon="['fas', 'file-invoice-dollar']" class="icon" />
         <span class="label">Lịch sử giao dịch</span>
       </div>
-      <div class="dropdown-item">
+      <div class="dropdown-item" @click="goToMyProfile">
         <font-awesome-icon :icon="['fas', 'id-card']" class="icon" />
         <span class="label">Hồ sơ của tôi</span>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 export default {
   data() {
     return {
       dropdownOpen: false,
-      dropdownWidth: 0,
       dropdownTop: 0,
       dropdownLeft: 0,
+      isAuthenticated: false
     }
   },
   mounted() {
+    const token = localStorage.getItem('token')
+    this.isAuthenticated = !!token
+    this.checkAuth()
+    this.tokenChecker = setInterval(() => {
+      this.checkAuth()
+    }, 500)
     document.addEventListener("click", this.handleClickOutside)
   },
   beforeUnmount() {
     document.removeEventListener("click", this.handleClickOutside)
   },
   methods: {
+    checkAuth() {
+      const token = localStorage.getItem('token')
+      this.isAuthenticated = !!token
+    },
     toggleDropdown() {
+      if (!this.isAuthenticated) return
+
       this.dropdownOpen = !this.dropdownOpen
       this.$nextTick(() => {
         if (this.$refs.accountRef) {
           const rect = this.$refs.accountRef.getBoundingClientRect()
-          this.dropdownWidth = rect.width
-          this.dropdownTop = rect.bottom + window.scrollY 
+          this.dropdownTop = rect.bottom + window.scrollY
           this.dropdownLeft = rect.left + window.scrollX
         }
       })
@@ -84,10 +92,14 @@ export default {
     handleClickOutside(event) {
       if (
         this.dropdownOpen &&
+        this.$refs.accountRef &&
         !this.$refs.accountRef.contains(event.target)
       ) {
         this.dropdownOpen = false
       }
+    },
+    goToLogin() {
+      this.$router.push('/login')
     },
     goToMyOrders() {
       this.dropdownOpen = false
@@ -101,13 +113,18 @@ export default {
       this.dropdownOpen = false
       this.$router.push('/my-sample-receipts')
     },
-    goToMyResults(){
+    goToMyResults() {
       this.dropdownOpen = false
       this.$router.push('/my-results')
+    },
+    goToMyProfile() {
+      this.dropdownOpen = false
+      this.$router.push('/my-profile')
     }
   }
 }
 </script>
+
 <style scoped>
 header {
   width: 100%;
@@ -125,7 +142,7 @@ header {
   font-size: 1rem;
 }
 
-.nav-menu > div {
+.nav-menu>div {
   flex: 1;
   text-align: center;
   cursor: pointer;
@@ -135,7 +152,7 @@ header {
   position: relative;
 }
 
-.nav-menu > div:hover {
+.nav-menu>div:hover {
   color: #2b6cb0;
 }
 
@@ -147,6 +164,7 @@ header {
   border-bottom-right-radius: 8px;
   overflow: hidden;
   background-color: white;
+  z-index: 1000;
 }
 
 .dropdown-item {

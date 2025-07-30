@@ -22,10 +22,15 @@
                         PKQ{{ tx.id }}
                     </div>
                     <div class="col">ĐH{{ tx.bookingId }}</div>
-                    <div class="col">
+                    <div class="col d-flex gap-2 justify-content-center">
                         <button class="btn btn-sm btn-danger d-flex align-items-center justify-content-center"
                             @click="downloadPDF(tx.id)" title="Tải phiếu kết quả PDF">
                             <i class="bi bi-download"></i>
+                        </button>
+
+                        <button class="btn btn-sm btn-xanhtim d-flex align-items-center justify-content-center"
+                            @click="openFeedback(tx.id)" title="Đánh giá kết quả">
+                            <i class="bi bi-star-fill me-1"></i> Đánh giá
                         </button>
                     </div>
 
@@ -42,6 +47,7 @@
         </div>
         <Teleport to="body">
             <DetailModal v-if="showDetail" :sampleReceiptId="selectedSampleReceiptId" @close="showDetail = false" />
+             <FeedbackModal v-if="showFeedback" :resultId="selectedFeedbackId" @close="showFeedback = false" />
         </Teleport>
     </div>
 </template>
@@ -56,12 +62,13 @@ import DetailModal from './detail.vue';
 import html2pdf from 'html2pdf.js';
 import { createApp } from 'vue';
 import PdfRenderModal from './detail-pdf.vue';
+import FeedbackModal from './feedback.vue';
 
 export default {
     props: {
         filterStatus: [String, Number],
     },
-    components: { Paginate, Multiselect, DetailModal },
+    components: { Paginate, Multiselect, DetailModal, FeedbackModal  },
     data() {
         return {
             bookings: [],
@@ -72,7 +79,9 @@ export default {
             statusOptions: [],
             showUpdateModal: false,
             selectedSampleReceiptId: null,
-            showDetail: false
+            showDetail: false,
+            selectedFeedbackId: null,
+            showFeedback: false,
         };
     },
     watch: {
@@ -88,6 +97,10 @@ export default {
         this.fetchSampleReceipt();
     },
     methods: {
+        openFeedback(id) {
+            this.selectedFeedbackId = id;
+            this.showFeedback = true;
+        },
         openDetail(id) {
             this.selectedSampleReceiptId = id;
             this.showDetail = true;
@@ -99,7 +112,7 @@ export default {
                     params: {
                         page: this.currentPage,
                         pageSize: this.pageSize,
-                        status: this.filterStatus !== '' ? this.filterStatus : null,
+                        token: this.token,
                     },
                 })
                 .then((res) => {
@@ -241,4 +254,15 @@ export default {
     display: none !important;
     content: none !important;
 }
+.btn-xanhtim {
+  background-color: #4257b2;
+  color: white;
+  border: none;
+}
+
+.btn-xanhtim:hover {
+  background-color: #36499c;
+  color: white;
+}
+
 </style>

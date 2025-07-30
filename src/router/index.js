@@ -19,6 +19,9 @@ import TestResultManagement from "@/pages/admin/test-result-management/index.vue
 import MyResults from "@/pages/customer/result/index.vue";
 import MyProfile from "@/pages/customer/profile/index.vue";
 import VerifyEmail from "@/components/customer/verify-email.vue";
+import IntroduceService from "@/pages/common/introduce-service.vue";
+import Instruction from "@/pages/common/instruction.vue";
+import Blogs from "@/pages/common/blogs.vue";
 
 const routes = [
   {
@@ -26,6 +29,18 @@ const routes = [
     component: MainLayout,
     children: [
       { path: "", component: Home },
+      { path: "/introduce-services",
+        name: "IntroduceService", 
+        component: IntroduceService 
+      },
+      { path: "/instruction",
+        name: "Instruction", 
+        component: Instruction 
+      },
+      { path: "/blogs",
+        name: "Blogs", 
+        component: Blogs 
+      },
       {
         path: "login",
         name: "Login",

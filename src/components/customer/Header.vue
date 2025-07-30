@@ -2,10 +2,10 @@
   <div class="relative">
     <header class="bg-white shadow-md px-6 flex justify-between items-center" ref="headerRef">
       <nav class="nav-menu w-full">
-        <div>Trang chủ</div>
-        <div>Các loại dịch vụ</div>
-        <div>Hướng dẫn thu mẫu</div>
-        <div>Chia sẻ về ADN</div>
+        <div @click="goToHomepage">Trang chủ</div>
+        <div @click="goToIntroduceService">Các loại dịch vụ</div>
+        <div @click="goToInstruction">Hướng dẫn thu mẫu</div>
+        <div @click="goToBlogs">Chia sẻ về ADN</div>
 
         <!-- Đã đăng nhập -->
         <div v-if="isAuthenticated" class="relative flex items-center justify-center account-menu" ref="accountRef"
@@ -106,6 +106,18 @@ export default {
       this.dropdownOpen = false
       this.$router.push('/my-orders')
     },
+    goToHomepage(){
+      this.$router.push('/')
+    },
+    goToIntroduceService(){
+      this.$router.push('/introduce-services')
+    },
+    goToInstruction() {
+      this.$router.push('/instruction')
+    },  
+    goToBlogs() {
+      this.$router.push('/blogs')
+    }, 
     goToTransactionHistory() {
       this.dropdownOpen = false
       this.$router.push('/transaction-history')

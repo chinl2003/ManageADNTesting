@@ -49,14 +49,13 @@ export default {
       ],
       Manager: [
         { name: 'Thống kê', icon: ['fas', 'chart-bar'] },
-        // { name: 'Quản lí dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-management' },
+        { name: 'Quản lí dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-management' },
         { name: 'Quản lí giá dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-price-management' },
         { name: 'Quản lí tài khoản', icon: ['fas', 'users'], route: '/admin/account-management' }
       ],
       Admin: [
         { name: 'Quản lí tài khoản', icon: ['fas', 'users'], route: '/admin/account-management' },
-        { name: 'Quản lí nội dung blogs', icon: ['fas', 'blog'] },
-        { name: 'Quản lí dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-management' },
+        { name: 'Quản lí nội dung blogs', icon: ['fas', 'blog'] }
       ]
     };
 

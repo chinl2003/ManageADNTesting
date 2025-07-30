@@ -54,11 +54,12 @@ export default {
             if (!this.rating || !this.comment.trim()) {
                 return alert('Vui lòng nhập đầy đủ đánh giá và chọn sao.');
             }
-
+            const userId = localStorage.getItem('userId');
             const payload = {
                 bookingId: this.resultId,
                 stars: this.rating,
                 comment: this.comment.trim(),
+                userId: parseInt(userId)
             };
 
             axios.post('/rating/new-rating', payload)

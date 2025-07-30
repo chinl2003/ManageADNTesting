@@ -59,20 +59,13 @@
         <button class="social google">Đăng ký bằng Google</button>
       </div>
     </div>
-    <Teleport to="body">
-      <VerifyEmail v-if="showModal" :visible="showModal" @close="showModal = false" :default-email="form.email" />
-    </Teleport>
   </div>
 </template>
 
 <script>
 import axios from '@/utils/axios';
 import { useToast } from 'vue-toastification';
-import VerifyEmail from '@/components/customer/verify-email.vue';
 export default {
-  components: {
-    VerifyEmail,
-  },
   setup() {
     const toast = useToast();
     return { toast };
@@ -91,8 +84,7 @@ export default {
         agree: false,
       },
       errors: {},
-      isSubmitting: false,
-      showModal: false,
+      isSubmitting: false
     };
   },
   methods: {
@@ -175,7 +167,7 @@ export default {
         .then((response) => {
           if (response.data.success) {
             this.toast.success(response.data.message || 'Đăng ký thành công!');
-            this.showModal = true;
+            this.$router.push('/veryfy-email');
           } else {
             this.toast.error(response.data.message || 'Đăng ký thất bại!');
           }

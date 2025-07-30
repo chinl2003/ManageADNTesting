@@ -18,7 +18,7 @@
         <div v-else class="relative flex items-center justify-center account-menu cursor-pointer" @click="goToLogin">
           <font-awesome-icon :icon="['fas', 'user']" class="mr-1" />
           <span class="text-gray-500 hover:text-blue-600 transition">
-            Đăng nhập để tiếp tục trải nghiệm
+            Xác thực tài khoản
           </span>
         </div>
       </nav>
@@ -99,8 +99,9 @@ export default {
       }
     },
     goToLogin() {
-      this.$router.push('/login')
+      this.$router.push('/veryfy-email')
     },
+
     goToMyOrders() {
       this.dropdownOpen = false
       this.$router.push('/my-orders')

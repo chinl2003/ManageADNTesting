@@ -18,6 +18,7 @@ import SampleReceipts from "@/pages/customer/sample-receipt/index.vue";
 import TestResultManagement from "@/pages/admin/test-result-management/index.vue";
 import MyResults from "@/pages/customer/result/index.vue";
 import MyProfile from "@/pages/customer/profile/index.vue";
+import VerifyEmail from "@/components/customer/verify-email.vue";
 
 const routes = [
   {
@@ -59,6 +60,11 @@ const routes = [
         path: "my-profile",
         name: "MyProfile",
         component: MyProfile
+      },
+      {
+        path: "veryfy-email",
+        name: "VerifyEmail",
+        component: VerifyEmail
       },
     ]
   },

@@ -28,6 +28,7 @@ export default {
             { name: 'Quản lí đơn hàng', icon: ['fas', 'shopping-cart'], route: '/admin/booking-management' },
             { name: 'Quản lí phiếu thu mẫu', icon: ['fas', 'file-invoice'], route: '/admin/sample-management' },
             { name: 'Quản lí yêu cầu thu mẫu', icon: ['fas', 'file-signature'], route: '/admin/appointment-management' },
+            { name: 'Quản lí kết quả xét nghiệm', icon: ['fas', 'file-signature'], route: '/admin/test-result-management' },
             { name: 'Thống kê', icon: ['fas', 'chart-bar'] },
             { name: 'Quản lí đánh giá dịch vụ', icon: ['fas', 'star'] },
             { name: 'Quản lí dịch vụ', icon: ['fas', 'flask'], route: '/admin/service-management' },

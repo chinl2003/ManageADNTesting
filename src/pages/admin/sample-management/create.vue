@@ -29,7 +29,7 @@
                 Căn cứ theo thông tin của đơn hàng với mã: ĐH{{ confirmedBooking.id }}
               </p>
               <p><strong>Loại xét nghiệm:</strong> {{ confirmedBooking.isCivil ? 'Dân sự' : 'Hành chính' }}</p>
-              <p><strong>Loại dịch vụ:</strong> {{ getSampleMethodLabel(confirmedBooking.sampleMethod) }}</p>
+              <p><strong>Loại dịch vụ:</strong> {{ confirmedBooking.serviceName }}</p>
 
               <!-- Người gửi mẫu -->
               <div class="border rounded p-3 mb-3">
@@ -56,42 +56,50 @@
                 </div>
               </div>
 
-              <!-- Add Sample Button -->
-              <div class="text-end mb-2">
-                <button class="btn btn-register btn-icon-only" @click="addSampleRow" title="Thêm dòng mới">
-                  <font-awesome-icon icon="circle-plus" />
-                </button>
-              </div>
+             <div class="text-end mb-2">
+  <button class="btn btn-register btn-icon-only" @click="addSampleRow" title="Thêm dòng mới">
+    <font-awesome-icon icon="circle-plus" />
+  </button>
+</div>
 
-              <div class="sample-table p-2 border rounded">
-                <div class="row fw-bold border-bottom pb-2">
-                  <div class="col-1">STT</div>
-                  <div class="col-2">Loại mẫu</div>
-                  <div class="col-2">Số lượng</div>
-                  <div class="col-2">Tình trạng</div>
-                  <div class="col-2">Người lấy mẫu</div>
-                  <div class="col-2">Thời gian lấy</div>
-                  <div class="col-1 text-end"></div>
-                </div>
+<div class="sample-table-wrapper">
+  <div class="sample-table p-2 border rounded">
+    <div class="row fw-bold border-bottom pb-2" style="display: flex; flex-wrap: nowrap;">
+      <div class="cell-header" style="width: 40px;">STT</div>
+      <div class="cell-header" style="width: 120px;">Mã mẫu</div>
+      <div class="cell-header" style="width: 120px;">Loại mẫu</div>
+      <div class="cell-header" style="width: 120px;">Người sở hữu</div>
+      <div class="cell-header" style="width: 120px;">Quan hệ</div>
+      <div class="cell-header" style="width: 80px;">Số lượng</div>
+      <div class="cell-header" style="width: 120px;">Tình trạng</div>
+      <div class="cell-header" style="width: 100px;">Người lấy mẫu</div>
+      <div class="cell-header" style="width: 160px;">Thời gian lấy</div>
+      <div style="width: 40px;" class="text-end"></div>
+    </div>
 
-                <div v-for="(sample, index) in samples" :key="index" class="row py-2 align-items-center border-bottom">
-                  <div class="col-1">{{ index + 1 }}</div>
-                  <div class="col-2"><input v-model="sample.type" type="text" class="form-control"
-                      placeholder="Loại mẫu" /></div>
-                  <div class="col-2"><input v-model="sample.quantity" type="text" class="form-control" /></div>
-                  <div class="col-2"><input v-model="sample.status" type="text" class="form-control"
-                      placeholder="Tình trạng" /></div>
-                  <div class="col-2"><input v-model="sample.collector" type="text" class="form-control"
-                      placeholder="Người thu" /></div>
-                  <div class="col-2"><input v-model="sample.collectionTime" type="datetime-local"
-                      class="form-control" /></div>
-                  <div class="col-1 text-end">
-                    <button class="btn btn-sm btn-outline-danger" @click="removeSampleRow(index)" title="Xóa">
-                      <font-awesome-icon icon="trash-alt" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+    <div
+      v-for="(sample, index) in samples"
+      :key="index"
+      class="row py-2 align-items-center border-bottom"
+      style="display: flex; flex-wrap: nowrap;"
+    >
+      <div style="width: 40px;">{{ index + 1 }}</div>
+      <div style="width: 120px;"><input v-model="sample.sampleCode" type="text" class="form-control" placeholder="Mã mẫu" /></div>
+      <div style="width: 120px;"><input v-model="sample.type" type="text" class="form-control" placeholder="Loại mẫu" /></div>
+      <div style="width: 120px;"><input v-model="sample.owner" type="text" class="form-control" placeholder="Người sở hữu" /></div>
+      <div style="width: 120px;"><input v-model="sample.relationship" type="text" class="form-control" placeholder="Quan hệ" /></div>
+      <div style="width: 80px;"><input v-model="sample.quantity" type="text" class="form-control" /></div>
+      <div style="width: 120px;"><input v-model="sample.status" type="text" class="form-control" placeholder="Tình trạng" /></div>
+      <div style="width: 100px;"><input v-model="sample.collector" type="text" class="form-control" placeholder="Người thu" /></div>
+      <div style="width: 160px;"><input v-model="sample.collectionTime" type="datetime-local" class="form-control" /></div>
+      <div style="width: 40px;" class="text-end">
+        <button class="btn btn-sm btn-outline-danger" @click="removeSampleRow(index)" title="Xóa">
+          <font-awesome-icon icon="trash-alt" />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
             </div>
           </div>
         </div>
@@ -131,10 +139,13 @@ export default {
       samples: [
         {
           type: '',
+          owner: '',
           quantity: 0,
           status: '',
           collector: '',
-          collectionTime: ''
+          collectionTime: '',
+          relationship: '',
+          sampleCode: ''
         }
       ]
     }
@@ -149,7 +160,7 @@ export default {
             pageSize: this.pageSize,
             status: null,
             IsAll: true,
-            IsAppointment: true,
+            IsSampleReceipt: true,
           }
         })
         if (res.data.success) {
@@ -187,20 +198,19 @@ export default {
     addSampleRow() {
       this.samples.push({
         type: '',
+        owner: '',
         quantity: 1,
         status: '',
         collector: '',
-        collectionTime: ''
+        collectionTime: '',
+        relationship: '',
+        sampleCode: ''
       })
     },
     removeSampleRow(index) {
       this.samples.splice(index, 1)
     },
     saveForm() {
-      if (!this.confirmedBooking || !this.receiverName || !this.receiveDate || this.samples.length === 0) {
-        toastWarning('Vui lòng nhập đầy đủ thông tin');
-        return;
-      }
 
       const payload = {
         bookingId: this.confirmedBooking.id,
@@ -210,10 +220,13 @@ export default {
         receiveDate: this.receiveDate,
         samples: this.samples.map(s => ({
           type: s.type,
+          owner: s.owner,
           quantity: Number(s.quantity),
           status: s.status,
           collector: s.collector,
-          collectionTime: s.collectionTime
+          collectionTime: s.collectionTime,
+          relationship: s.relationship,
+          sampleCode: s.sampleCode
         }))
       };
 
@@ -379,4 +392,20 @@ input.form-control:focus {
 .footer-buttons {
   margin-left: auto;
 }
+.sample-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.sample-table {
+  min-width: 1200px;
+}
+.cell-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+}
+
 </style>
